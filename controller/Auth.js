@@ -1,32 +1,42 @@
 const { User } = require("../model/User");
+const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const { filterUser } = require("../services/common");
 
 exports.signupUser = async (req, res) => {
   try {
-    console.log(req.body);
-    const user = new User(req.body);
-    const doc = await user.save();
-    res.status(201).json(doc);
+    const salt = crypto.randomBytes(16);
+    crypto.pbkdf2(
+      req.body.password,
+      salt,
+      310000,
+      32,
+      "sha256",
+      async function (err, hashedPassword) {
+        const user = new User({ ...req.body, password: hashedPassword, salt }); //this will save user with hashed password using crypto library.
+        const doc = await user.save();
+        //signup doesn't automatically creates the session you have this block of code will help you to create session even after signup.
+        req.login(filterUser(doc), (err) => {
+          if (err) {
+            res.status(401).json(err);
+          } else {
+            const token = jwt.sign(filterUser(doc), "SECRET_KEY");
+            res.status(201).json(token);
+          }
+        });
+      }
+    );
   } catch (err) {
+    console.log(err);
     res.status(401).json(err);
   }
 };
 
 exports.loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const encryptedPassword = Buffer.from(password);
-    const user = await User.findOne({ email: email });
-    if (!user) {
-      return res.status(401).json("Invalid User");
-    }
-    console.log("enc " + typeof encryptedPassword);
-    console.log("str " + typeof user.password);
-    if (Number(encryptedPassword) === Number(user.password)) {
-      res.status(201).json("succesful");
-    } else {
-      res.status(401).json("Invalid User");
-    }
-  } catch (err) {
-    res.status(401).json(err);
-  }
+  res.json(req.user);
+};
+
+//this route is used for checking the session.
+exports.checkUser = async (req, res) => {
+  res.json(req.user);
 };
