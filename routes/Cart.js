@@ -9,8 +9,8 @@ const router = express.Router();
 
 router
   .post("/", addToCart)
-  .get("/:id", getCartByUserId)
-  .post("/:id", updateCartItem)
+  .get("/", getCartByUserId)
+  .patch("/:id", updateCartItem)
   .delete("/:id", deleteCartItem);
 
 exports.router = router;

@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const productsRouter = require("./routes/Products");
 const cartRouter = require("./routes/Cart");
 const authRouter = require("./routes/Auth");
+const orderRouter = require("./routes/Order");
+const userRouter = require("./routes/User");
 const cors = require("cors");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -13,6 +15,7 @@ const crypto = require("crypto");
 const { filterUser, isAuth } = require("./services/common");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
+const jwt = require("jsonwebtoken");
 
 main().catch((err) => console.log(err));
 
@@ -41,33 +44,37 @@ app.use(passport.session());
 
 passport.use(
   // authenticate route for using this strategy as local.
-  new LocalStrategy(async function (username, password, done) {
-    try {
-      const user = await User.findOne({ email: username });
-      if (!user) {
-        return done(null, false, { message: "Invalid User." });
-      }
-
-      crypto.pbkdf2(
-        password, // this password will hashed.
-        user.salt,
-        310000,
-        32,
-        "sha256",
-        async function (err, hashedPassword) {
-          if (!crypto.timingSafeEqual(user.password, hashedPassword)) {
-            // it will compare the stored password and provided password.
-            done(null, false, { message: "Invalid User" });
-          } else {
-            return done(null, filterUser(user));
-          }
+  new LocalStrategy(
+    { usernameField: "email" }, // here username field will change make email to use as a username.
+    async function (email, password, done) {
+      try {
+        const user = await User.findOne({ email: email });
+        if (!user) {
+          return done(null, false, { message: "Invalid User." });
         }
-      );
-    } catch (err) {
-      console.log(err);
-      return done(err, false);
+
+        crypto.pbkdf2(
+          password, // this entered password will be hashed.
+          user.salt,
+          310000,
+          32,
+          "sha256",
+          async function (err, hashedPassword) {
+            // it will compare the stored password and provided password.
+            if (!crypto.timingSafeEqual(user.password, hashedPassword)) {
+              done(null, false, { message: "Invalid User" });
+            } else {
+              const token = jwt.sign(filterUser(user), SECRET_KEY);
+              return done(null, token);
+            }
+          }
+        );
+      } catch (err) {
+        console.log(err);
+        return done(err, false);
+      }
     }
-  })
+  )
 );
 
 passport.use(
@@ -75,9 +82,9 @@ passport.use(
   new JwtStrategy(opts, async function (jwt_payload, done) {
     console.log(jwt_payload); // it will hold user information which you will provide.
     try {
-      const user = await User.findOne({ id: jwt_payload.sub });
+      const user = await User.findById(jwt_payload.id);
       if (user) {
-        return done(null, filterUser(user));
+        return done(null, user);
       } else {
         return done(null, false);
         // or you could create a new account
@@ -91,6 +98,7 @@ passport.use(
 passport.serializeUser(function (user, done) {
   process.nextTick(function () {
     // this will create session and then you will be able to use that session for authentication.
+    console.log("serialize");
     return done(null, filterUser(user));
   });
 });
@@ -98,13 +106,17 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (user, done) {
   process.nextTick(function () {
     //this will help to use created session.
+    console.log("deserialize");
+
     return done(null, filterUser(user));
   });
 });
 
 app.use("/auth", authRouter.router);
-app.use("/products", isAuth, productsRouter.router);
-app.use("/cart", cartRouter.router);
+app.use("/products", isAuth(), productsRouter.router);
+app.use("/cart", isAuth(), cartRouter.router);
+app.use("/orders", isAuth(), orderRouter.router);
+app.use("/users", isAuth(), userRouter.router);
 
 app.listen(8080, () => {
   console.log("server is running.");

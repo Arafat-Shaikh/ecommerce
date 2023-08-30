@@ -1,6 +1,5 @@
 const express = require("express");
 const {
-  fetchAllProducts,
   createNewProduct,
   fetchFilteredProducts,
   fetchProductById,

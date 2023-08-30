@@ -23,6 +23,7 @@ exports.fetchProductById = async (req, res) => {
 
 exports.fetchFilteredProducts = async (req, res) => {
   try {
+    console.log("logged in user id " + req.user.id);
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.limit) || 2;
     let query = Product.find({});
