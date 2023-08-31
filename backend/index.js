@@ -113,7 +113,7 @@ passport.deserializeUser(function (user, done) {
 });
 
 app.use("/auth", authRouter.router);
-app.use("/products", isAuth(), productsRouter.router);
+app.use("/products", productsRouter.router);
 app.use("/cart", isAuth(), cartRouter.router);
 app.use("/orders", isAuth(), orderRouter.router);
 app.use("/users", isAuth(), userRouter.router);
