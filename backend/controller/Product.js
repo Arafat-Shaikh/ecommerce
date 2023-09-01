@@ -11,6 +11,18 @@ exports.createNewProduct = async (req, res) => {
   }
 };
 
+exports.fetchAllProducts = async (req, res) => {
+  console.log("hello");
+  try {
+    const product = await Product.find({});
+    console.log("here new api " + product);
+    res.status(201).json(product);
+  } catch (err) {
+    res.status(401).json(err);
+    console.log(err);
+  }
+};
+
 exports.fetchProductById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -24,10 +36,9 @@ exports.fetchProductById = async (req, res) => {
 exports.fetchFilteredProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.limit) || 2;
+    const pageSize = parseInt(req.query.perPage) || 6;
     let query = Product.find({});
-    let productCount = await Product.countDocuments();
-    console.log(productCount);
+    let productCount = "";
 
     const sort = req.query.sort;
     const sortValue = req.query.order == "asc" ? 1 : -1;
@@ -46,8 +57,14 @@ exports.fetchFilteredProducts = async (req, res) => {
 
     query = query.skip((page - 1) * pageSize).limit(pageSize);
 
+    if (req.query.category || req.query.brand) {
+      productCount = await Product.countDocuments(query);
+    } else {
+      productCount = await Product.countDocuments();
+    }
+
     const docs = await query.exec();
-    res.setHeader("X-DOCUMENT-COUNT", productCount);
+    res.set("X-DOCUMENT-COUNT", productCount);
     res.status(201).json(docs);
   } catch (err) {
     res.status(401).json(err);

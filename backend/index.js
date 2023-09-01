@@ -29,7 +29,7 @@ const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = SECRET_KEY;
 
-app.use(cors());
+app.use(cors({ exposedHeaders: ["X-DOCUMENT-COUNT"] }));
 app.use(express.json());
 app.use(
   session({
