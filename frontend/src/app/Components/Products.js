@@ -17,6 +17,7 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
 import { ITEMS_PER_PAGE } from "../constants/Constants";
+import { Link } from "react-router-dom";
 
 const sortOptions = [
   { name: "Top Rating", value: "rating", href: "#", current: false },
@@ -44,15 +45,16 @@ function classNames(...classes) {
 export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const dispatch = useDispatch();
-  // const products = useSelector(selectProducts);
+  const fetchedProducts = useSelector(selectProducts);
   const totalProducts = useSelector(selectTotalProducts);
   const productsForFilter = useSelector(selectProductsForFilter);
   const [page, setPage] = useState(1);
   const [sorting, setSorting] = useState({});
   const [selectFilters, setSelectFilter] = useState({});
   const [searchValue, setSearchValue] = useState(null);
+  const [searchedProducts, setSearchedProducts] = useState([]);
   const pagesCount = Math.ceil(totalProducts / ITEMS_PER_PAGE);
-  const [products, setProducts] = useState([]);
+  let products = searchedProducts.length ? searchedProducts : fetchedProducts;
 
   if (productsForFilter) {
     for (let product of productsForFilter) {
@@ -66,48 +68,31 @@ export default function Product() {
     console.log(filters);
   }
 
+  //if searchValue has words then show searched Products if searchValue has no words then show filterfetched products.
+
   function handleSearchChange(e) {
-    setSearchValue(e.target.value);
+    if (e.target.value) {
+      setSearchValue(e.target.value);
+    } else {
+      setSearchedProducts([]);
+    }
   }
 
   function handleProductSearch() {
-    console.log(products);
-    let addProduct = false;
-    let productsCopy = [...productsForFilter];
-    let productForSearch = [...products];
-    console.log(productsCopy);
-    for (let product of productsCopy) {
-      if (product.title.toLowerCase().includes(searchValue.toLowerCase())) {
-        console.log("matched product");
-        console.log(product);
-        for (let searched of productForSearch) {
-          if (searched.id === product.id) {
-            addProduct = true;
-          }
-          if (addProduct) break;
-        }
-        if (!addProduct) {
-          console.log(product);
-          const searchedProduct = [...products, product];
-          console.log(productsForFilter);
-          console.log(products);
-          setProducts(searchedProduct);
-        } else {
-          setProducts(productForSearch);
-        }
-      } else {
-        if (productForSearch.length) {
-          const copyProducts = [...products];
-          const index = copyProducts.findIndex((p) => p.id === product.id);
-          if (index) {
-            console.log("unmatched");
-            copyProducts.splice(index, 1);
-            setProducts(copyProducts);
-          }
-        }
+    console.log(searchedProducts);
+    const copiedProducts = [...productsForFilter];
+    let temp = [];
+    for (let product of copiedProducts) {
+      if (
+        product.title.toLowerCase().trim().includes(searchValue) ||
+        product.category.toLowerCase().trim().includes(searchValue) ||
+        product.brand.toLowerCase().trim().includes(searchValue)
+      ) {
+        console.log("hello");
+        temp.push(product);
       }
     }
-    console.log(products);
+    setSearchedProducts(temp);
   }
 
   function handleQuery(e, option, sectionName) {
@@ -117,6 +102,7 @@ export default function Product() {
     let smSectionName = sectionName.toLowerCase();
     let testFilter = { ...selectFilters };
     if (e.target.checked) {
+      setSearchedProducts([]);
       testFilter = { ...selectFilters, [smSectionName]: option };
       setSelectFilter(testFilter);
     } else {
@@ -279,7 +265,6 @@ export default function Product() {
                     placeholder="Search"
                     aria-label="Search"
                     aria-describedby="button-addon3"
-                    // value={searchValue}
                     onChange={(e) => handleSearchChange(e)}
                   />
                   {/* Search button */}
@@ -447,9 +432,9 @@ export default function Product() {
 
                         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                           {products.map((product) => (
-                            <a
+                            <Link
                               key={product.id}
-                              href={product.title}
+                              to="/product-detail"
                               className="group"
                             >
                               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
@@ -492,7 +477,7 @@ export default function Product() {
                                   </h3>
                                 </div>
                               </div>
-                            </a>
+                            </Link>
                           ))}
                         </div>
                       </div>
