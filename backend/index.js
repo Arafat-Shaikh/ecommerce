@@ -114,9 +114,9 @@ passport.deserializeUser(function (user, done) {
 
 app.use("/auth", authRouter.router);
 app.use("/products", productsRouter.router);
-app.use("/cart", isAuth(), cartRouter.router);
-app.use("/orders", isAuth(), orderRouter.router);
-app.use("/users", isAuth(), userRouter.router);
+app.use("/cart", cartRouter.router);
+app.use("/orders", orderRouter.router);
+app.use("/users", userRouter.router);
 
 app.listen(8080, () => {
   console.log("server is running.");

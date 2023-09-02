@@ -1,4 +1,5 @@
 export function addToCartApi(product) {
+  console.log(product);
   return new Promise(async (resolve, reject) => {
     try {
       const response = await fetch(`http://localhost:8080/cart`, {
@@ -6,7 +7,7 @@ export function addToCartApi(product) {
         headers: {
           "Content-Type": "application/json", // Corrected headers
         },
-        body: JSON.stringify({ product }), // Corrected body
+        body: JSON.stringify(product), // Corrected body
       });
 
       if (!response.ok) {
@@ -14,7 +15,7 @@ export function addToCartApi(product) {
       }
 
       const data = await response.json();
-      resolve(data);
+      resolve({ data });
     } catch (error) {
       reject(error);
     }
@@ -26,7 +27,7 @@ export function fetchCartByUser() {
     try {
       const response = await fetch(`http://localhost:8080/cart`);
 
-      if (response.ok) {
+      if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 

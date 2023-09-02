@@ -7,6 +7,12 @@ import {
   selectProductById,
 } from "../Slices/productSlice";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCartApiAsync,
+  fetchCartByUserAsync,
+  selectCart,
+} from "../Slices/CartSlice";
+import { fetchCartByUser } from "../Api/cartApi";
 
 // const product = {
 //   name: "Basic Tee 6-Pack",
@@ -72,8 +78,18 @@ export default function Example() {
   const dispatch = useDispatch();
   const params = useParams();
   const product = useSelector(selectProductById);
+  const cart = useSelector(selectCart);
 
-  function handleAddToCart(productId) {}
+  function handleAddToCart(productId) {
+    if (cart) {
+      const index = cart.findIndex((item) => item.product.id === productId);
+      if (index === -1) {
+        dispatch(addToCartApiAsync({ product: productId, quantity: 1 }));
+      } else {
+        alert("Item is already added.");
+      }
+    }
+  }
 
   console.log(product);
   useEffect(() => {

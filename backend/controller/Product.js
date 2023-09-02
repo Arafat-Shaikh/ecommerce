@@ -15,7 +15,6 @@ exports.fetchAllProducts = async (req, res) => {
   console.log("hello");
   try {
     const product = await Product.find({});
-    console.log("here new api " + product);
     res.status(201).json(product);
   } catch (err) {
     res.status(401).json(err);
@@ -26,7 +25,6 @@ exports.fetchAllProducts = async (req, res) => {
 exports.fetchProductById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id);
     const product = await Product.findById(id);
     res.status(201).json(product);
   } catch (err) {

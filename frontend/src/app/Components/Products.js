@@ -18,6 +18,8 @@ import {
 } from "@heroicons/react/20/solid";
 import { ITEMS_PER_PAGE } from "../constants/Constants";
 import { Link } from "react-router-dom";
+import Cart from "./Cart";
+import { fetchCartByUserAsync, selectCart } from "../Slices/CartSlice";
 
 const sortOptions = [
   { name: "Top Rating", value: "rating", href: "#", current: false },
@@ -54,6 +56,7 @@ export default function Product() {
   const [searchValue, setSearchValue] = useState(null);
   const [searchedProducts, setSearchedProducts] = useState([]);
   const pagesCount = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+  const cart = useSelector(selectCart);
   let products = searchedProducts.length ? searchedProducts : fetchedProducts;
 
   if (productsForFilter) {
@@ -134,6 +137,10 @@ export default function Product() {
     );
     dispatch(fetchProductFiltersAsync());
   }, [dispatch, page, sorting, selectFilters]);
+
+  useEffect(() => {
+    dispatch(fetchCartByUserAsync());
+  }, [cart]);
 
   return (
     <>

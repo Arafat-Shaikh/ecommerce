@@ -15,6 +15,7 @@ export const addToCartApiAsync = createAsyncThunk(
   "cart/addToCartApiAsync",
   async (product) => {
     const response = await addToCartApi(product);
+    console.log(response.data);
     return response.data;
   }
 );
@@ -22,6 +23,7 @@ export const addToCartApiAsync = createAsyncThunk(
 export const fetchCartByUserAsync = createAsyncThunk(
   "cart/fetchCartByUserAsync",
   async () => {
+    console.log("request sent");
     const response = await fetchCartByUser();
     return response.data;
   }
@@ -31,7 +33,7 @@ export const updateCartItemAsync = createAsyncThunk(
   "cart/updateCartAsync",
   async (item) => {
     const response = await updateCartItem(item);
-    response.data;
+    return response.data;
   }
 );
 
@@ -68,7 +70,9 @@ const cartSlice = createSlice({
       })
       .addCase(updateCartItemAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        const index = cartProducts.findIndex((p) => p.id === action.payload.id);
+        const index = state.cartProducts.findIndex(
+          (p) => p.id === action.payload.id
+        );
         state.cartProducts.splice(index, 1, action.payload);
       })
       .addCase(deleteItemApiAsync.pending, (state, action) => {
@@ -76,7 +80,9 @@ const cartSlice = createSlice({
       })
       .addCase(deleteItemApiAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        const index = cartProducts.findIndex((p) => p.id === action.payload.id);
+        const index = state.cartProducts.findIndex(
+          (p) => p.id === action.payload.id
+        );
         state.cartProducts.splice(index, 1);
       });
   },

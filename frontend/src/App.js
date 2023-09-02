@@ -5,6 +5,7 @@ import ProductListPage from "./pages/ProductListPage";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ProductInfo from "./app/Components/ProductInfo";
 import ProductInfoPage from "./pages/ProductInfoPage";
+import CartPage from "./pages/CartPage";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/product/detail/:id",
     element: <ProductInfoPage />,
+  },
+  {
+    path: "/cart",
+    element: <CartPage />,
   },
 ]);
 
