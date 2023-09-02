@@ -434,7 +434,7 @@ export default function Product() {
                           {products.map((product) => (
                             <Link
                               key={product.id}
-                              to="/product-detail"
+                              to={`/product/detail/${product.id}`}
                               className="group"
                             >
                               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">

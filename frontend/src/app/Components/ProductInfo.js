@@ -1,105 +1,212 @@
-export default function ProductInfo() {
-  return (
-    <div className="antialiased">
-      <div className="bg-white shadow-sm sticky top-0"></div>
-      <div className="py-6">
-        {/* Breadcrumbs */}
+import { useEffect, useState } from "react";
+import { StarIcon } from "@heroicons/react/20/solid";
+import { RadioGroup } from "@headlessui/react";
+import { useParams, useSearchParams } from "react-router-dom";
+import {
+  fetchProductByIdAsync,
+  selectProductById,
+} from "../Slices/productSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-        {/* ./ Breadcrumbs */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-          <div className="flex flex-col md:flex-row -mx-4">
-            <div className="md:flex-1 px-4 md:block sm:block">
-              <div x-data="{ image: 1 }" x-cloak="">
-                <div className="h-64 md:h-80 rounded-lg bg-gray-100 mb-4">
-                  <div className="  rounded-lg bg-gray-100 mb-4 flex items-center justify-center">
-                    <img src="https://i.dummyjson.com/data/products/1/1.jpg" />
-                  </div>
-                  <div className="  rounded-lg bg-gray-100 mb-4 flex items-center justify-center">
-                    <img src="https://i.dummyjson.com/data/products/1/1.jpg" />
-                  </div>
-                  <div className="  rounded-lg bg-gray-100 mb-4 flex items-center justify-center">
-                    <img src="https://i.dummyjson.com/data/products/1/1.jpg" />
-                  </div>
-                  <div className="  rounded-lg bg-gray-100 mb-4 flex items-center justify-center">
-                    <img src="https://i.dummyjson.com/data/products/1/1.jpg" />
-                  </div>
+// const product = {
+//   name: "Basic Tee 6-Pack",
+//   price: "$192",
+//   href: "#",
+//   breadcrumbs: [
+//     { id: 1, name: "Men", href: "#" },
+//     { id: 2, name: "Clothing", href: "#" },
+//   ],
+//   images: [
+//     {
+//       src: "https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg",
+//       alt: "Two each of gray, white, and black shirts laying flat.",
+//     },
+//     {
+//       src: "https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg",
+//       alt: "Model wearing plain black basic tee.",
+//     },
+//     {
+//       src: "https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg",
+//       alt: "Model wearing plain gray basic tee.",
+//     },
+//     {
+//       src: "https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg",
+//       alt: "Model wearing plain white basic tee.",
+//     },
+//   ],
+//   colors: [
+//     { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
+//     { name: "Gray", class: "bg-gray-200", selectedClass: "ring-gray-400" },
+//     { name: "Black", class: "bg-gray-900", selectedClass: "ring-gray-900" },
+//   ],
+//   sizes: [
+//     { name: "XXS", inStock: false },
+//     { name: "XS", inStock: true },
+//     { name: "S", inStock: true },
+//     { name: "M", inStock: true },
+//     { name: "L", inStock: true },
+//     { name: "XL", inStock: true },
+//     { name: "2XL", inStock: true },
+//     { name: "3XL", inStock: true },
+//   ],
+//   description:
+//     'The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive colorway: "Black". Need to add an extra pop of color to your outfit? Our white tee has you covered.',
+//   highlights: [
+//     "Hand cut and sewn locally",
+//     "Dyed with our proprietary colors",
+//     "Pre-washed & pre-shrunk",
+//     "Ultra-soft 100% cotton",
+//   ],
+//   details:
+//     'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
+// };
+const reviews = { href: "#", average: 4, totalCount: 117 };
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
+export default function Example() {
+  // const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  // const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
+  const dispatch = useDispatch();
+  const params = useParams();
+  const product = useSelector(selectProductById);
+
+  function handleAddToCart(productId) {}
+
+  console.log(product);
+  useEffect(() => {
+    if (params.id) {
+      console.log(params.id);
+      dispatch(fetchProductByIdAsync(params.id));
+    }
+  }, [params]);
+
+  return (
+    <>
+      {product && (
+        <div className="bg-white">
+          <div className="pt-6">
+            {/* Image gallery */}
+            <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
+              <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
+                <img
+                  src={product.images[0]}
+                  alt={product.title}
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+              <div className="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
+                <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
+                  <img
+                    src={product.images[1]}
+                    alt={product.title}
+                    className="h-full w-full object-cover object-center"
+                  />
                 </div>
-                <div className="flex -mx-2 mb-4">
-                  <template x-for="i in 4" />
+                <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
+                  <img
+                    src={product.images[2]}
+                    alt={product.title}
+                    className="h-full w-full object-cover object-center"
+                  />
                 </div>
+              </div>
+              <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
+                <img
+                  src={product.images[3]}
+                  alt={product.title}
+                  className="h-full w-full object-cover object-center"
+                />
               </div>
             </div>
-            <div className="md:flex-1 px-4 sm:block md:block">
-              <h2 className="mb-2 leading-tight tracking-tight font-bold text-gray-800 text-2xl md:text-3xl">
-                Lorem ipsum dolor, sit amet consectetur, adipisicing elit.
-              </h2>
-              <p className="text-gray-500 text-sm">
-                By{" "}
-                <a href="#" className="text-indigo-600 hover:underline">
-                  ABC Company
-                </a>
-              </p>
-              <div className="flex items-center space-x-4 my-4">
-                <div>
-                  <div className="rounded-lg bg-gray-100 flex py-2 px-3">
-                    <span className="text-indigo-400 mr-1 mt-1">$</span>
-                    <span className="font-bold text-indigo-600 text-3xl">
-                      25
-                    </span>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <p className="text-green-500 text-xl font-semibold">
-                    Save 12%
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    Inclusive of all Taxes.
-                  </p>
-                </div>
+
+            {/* Product info */}
+            <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16">
+              <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
+                <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                  {product.title}
+                </h1>
               </div>
-              <p className="text-gray-500">
-                Lorem ipsum, dolor sit, amet consectetur adipisicing elit. Vitae
-                exercitationem porro saepe ea harum corrupti vero id laudantium
-                enim, libero blanditiis expedita cupiditate a est.
-              </p>
-              <div className="flex py-4 space-x-4">
-                <div className="relative">
-                  <div className="text-center left-0 pt-2 right-0 absolute block text-xs uppercase text-gray-400 tracking-wide font-semibold">
-                    Qty
+
+              {/* Options */}
+              <div className="mt-4 lg:row-span-3 lg:mt-0">
+                <h2 className="sr-only">Product information</h2>
+                <p className="text-3xl tracking-tight text-gray-900">
+                  ${product.price}
+                </p>
+
+                {/* Reviews */}
+                <div className="mt-6">
+                  <h3 className="sr-only">Reviews</h3>
+                  <div className="flex items-center">
+                    <div className="flex items-center">
+                      {[0, 1, 2, 3, 4].map((rating) => (
+                        <StarIcon
+                          key={rating}
+                          className={classNames(
+                            reviews.average > rating
+                              ? "text-gray-900"
+                              : "text-gray-200",
+                            "h-5 w-5 flex-shrink-0"
+                          )}
+                          aria-hidden="true"
+                        />
+                      ))}
+                    </div>
+                    <p className="sr-only">{reviews.average} out of 5 stars</p>
+                    <a
+                      href={reviews.href}
+                      className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      {reviews.totalCount} reviews
+                    </a>
                   </div>
-                  <select className="cursor-pointer appearance-none rounded-xl border border-gray-200 pl-4 pr-8 h-14 flex items-end pb-1">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                  </select>
-                  <svg
-                    className="w-5 h-5 text-gray-400 absolute right-0 bottom-0 mb-2 mr-2"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 9l4-4 4 4m0 6l-4 4-4-4"
-                    />
-                  </svg>
                 </div>
+
+                {/* Sizes */}
+
                 <button
-                  type="button"
-                  className="h-14 px-6 py-2 font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white"
+                  onClick={() => handleAddToCart(product.id)}
+                  className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                  Add to Cart
+                  Add to bag
                 </button>
+              </div>
+
+              <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pb-16 lg:pr-8 lg:pt-6">
+                {/* Description and details */}
+                <div>
+                  <h3 className="text-2xl">Highlights</h3>
+
+                  <div className="space-y-6">
+                    <p className="text-base text-gray-900">
+                      {product.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-10">
+                  <h2 className="text-sm font-medium text-gray-900">
+                    Availability
+                  </h2>
+
+                  <div className="mt-4 space-y-6">
+                    <p
+                      className={` text-sm-600 ${
+                        product.stock > 0 ? " text-green-500 " : "text-red-500"
+                      }`}
+                    >
+                      {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

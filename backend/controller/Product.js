@@ -26,6 +26,7 @@ exports.fetchAllProducts = async (req, res) => {
 exports.fetchProductById = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(id);
     const product = await Product.findById(id);
     res.status(201).json(product);
   } catch (err) {

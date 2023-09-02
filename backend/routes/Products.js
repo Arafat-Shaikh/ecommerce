@@ -10,7 +10,7 @@ const router = express.Router();
 router
   .get("/", fetchFilteredProducts)
   .post("/", createNewProduct)
-  .get("/product/:id", fetchProductById)
+  .get("/detail/:id", fetchProductById)
   .get("/filter", fetchAllProducts);
 
 exports.router = router;

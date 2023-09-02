@@ -1,15 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  createProductApi,
+  deleteProductApi,
   fetchFilteredProducts,
+  fetchProductById,
   fetchProductFilters,
-  fetchProducts,
+  updateProductApi,
 } from "../Api/productApi";
 
 const initialState = {
-  products: "",
+  products: [],
   totalProductCount: null,
   productsForFilter: "",
   status: "idle",
+  productById: null,
 };
 
 export const fetchFilteredProductsAsync = createAsyncThunk(
@@ -33,6 +37,38 @@ export const fetchProductFiltersAsync = createAsyncThunk(
   }
 );
 
+export const fetchProductByIdAsync = createAsyncThunk(
+  "product/fetchProductByIdAsync",
+  async (id) => {
+    const response = await fetchProductById(id);
+    return response.data;
+  }
+);
+
+export const createProductApiAsync = createAsyncThunk(
+  "product/createProductApiAsync",
+  async (product) => {
+    const response = await createProductApi(product);
+    return response.data;
+  }
+);
+
+export const deleteProductApiAsync = createAsyncThunk(
+  "product/deleteProductApiAsync",
+  async (product) => {
+    const response = await deleteProductApi(product);
+    return response.data;
+  }
+);
+
+export const updateProductApiAsync = createAsyncThunk(
+  "product/updateProductApiAsync",
+  async () => {
+    const response = await updateProductApi();
+    return response.data;
+  }
+);
+
 const productSlice = createSlice({
   name: "product",
   initialState,
@@ -52,6 +88,40 @@ const productSlice = createSlice({
       .addCase(fetchProductFiltersAsync.fulfilled, (state, action) => {
         state.productsForFilter = action.payload;
         state.status = "Idle";
+      })
+      .addCase(fetchProductByIdAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchProductByIdAsync.fulfilled, (state, action) => {
+        state.productById = action.payload;
+        state.status = "idle";
+      })
+      .addCase(createProductApiAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(createProductApiAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.products.push(action.payload);
+      })
+      .addCase(deleteProductApiAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(deleteProductApiAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        const index = state.products.findIndex(
+          (p) => p.id === action.payload.id
+        );
+        state.products.splice(index, 1);
+      })
+      .addCase(updateProductApiAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(updateProductApiAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        const index = state.products.findIndex(
+          (p) => p.id === action.payload.id
+        );
+        state.products.splice(index, 1, action.payload);
       });
   },
 });
@@ -60,4 +130,5 @@ export const selectProducts = (state) => state.product.products;
 export const selectTotalProducts = (state) => state.product.totalProductCount;
 export const selectProductsForFilter = (state) =>
   state.product.productsForFilter;
+export const selectProductById = (state) => state.product.productById;
 export default productSlice.reducer;

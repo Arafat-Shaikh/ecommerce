@@ -1,7 +1,4 @@
 export function fetchFilteredProducts({ pagination, sorting, selectFilters }) {
-  console.log(pagination);
-  console.log(sorting);
-  console.log(selectFilters);
   let combinedQueries = { ...pagination, ...sorting, ...selectFilters };
   let queries = "";
   for (let key in combinedQueries) {
@@ -23,5 +20,68 @@ export function fetchProductFilters() {
     const data = await response.json();
     console.log(data);
     resolve({ data });
+  });
+}
+
+export function fetchProductById(id) {
+  return new Promise(async (resolve, reject) => {
+    const response = await fetch(`http://localhost:8080/products/detail/${id}`);
+    const data = await response.json();
+    console.log(data);
+    resolve({ data });
+  });
+}
+
+export function createProductApi(product) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`http://localhost:8080/products`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(product),
+      });
+      const data = await response.json();
+      resolve({ data });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+export function deleteProductApi(productId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/product/${productId}`,
+        {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      resolve({ data });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+export function updateProductApi(updatedProduct) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/product`,
+        updatedProduct.id,
+        {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(updatedProduct),
+        }
+      );
+      const data = await response.json();
+      resolve({ data });
+    } catch (err) {
+      reject(err);
+    }
   });
 }
