@@ -42,8 +42,9 @@ exports.updateCartItem = async (req, res) => {
 exports.deleteCartItem = async (req, res) => {
   try {
     const { id } = req.params;
-    await Cart.findByIdAndDelete(id);
-    res.status(201).json("Item deleted.");
+    console.log(id);
+    const item = await Cart.findByIdAndDelete(id);
+    res.status(201).json(item);
   } catch (err) {
     res.status(401).json(err);
   }

@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { selectCart } from "../Slices/CartSlice";
 
 const profilePicture = {
   name: "Tom Cook",
@@ -15,9 +16,9 @@ const profilePicture = {
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 };
 const navigation = [
-  { name: "Team", to: "/", user: true },
-  { name: "Admin", to: "/admin/product-list", admin: true },
-  { name: "Orders", to: "/admin/orders", admin: true },
+  { name: "Dashboard", to: "/", user: true },
+  // { name: "Admin", to: "/admin/product-list", admin: true },
+  // { name: "Orders", to: "/admin/orders", admin: true },
 ];
 const userNavigation = [
   { name: "Your Profile", link: "/user-profile" },
@@ -33,10 +34,11 @@ function classNames(...classes) {
 }
 
 export default function Navbar({ children }) {
+  const cart = useSelector(selectCart);
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="bg-black shadow-lg">
+        <Disclosure as="nav" className="bg-white shadow-lg">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -53,6 +55,17 @@ export default function Navbar({ children }) {
                     </div> */}
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
+                        <a
+                          className="mb-4 ml-2 mr-5 mt-3 flex items-center text-neutral-900 hover:text-neutral-900 focus:text-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400 lg:mb-0 lg:mt-0"
+                          href="#"
+                        >
+                          <img
+                            src="https://tecdn.b-cdn.net/img/logo/te-transparent-noshadows.webp"
+                            style={{ height: "15px" }}
+                            alt="TE Logo"
+                            loading="lazy"
+                          />
+                        </a>
                         {navigation.map((item, index) =>
                           item[user.role] ? (
                             <Link
@@ -61,7 +74,7 @@ export default function Navbar({ children }) {
                               className={classNames(
                                 item.current
                                   ? "bg-gray-900 text-white"
-                                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                  : "text-gray-600 hover:bg-gray-700 hover:text-white",
                                 "rounded-md px-3 py-2 text-sm font-medium"
                               )}
                             >
@@ -74,7 +87,7 @@ export default function Navbar({ children }) {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-4 flex items-center md:ml-6">
-                      <Link to="/cart">
+                      {/* <Link to="/cart">
                         <button
                           type="button"
                           className="relative rounded-full bg-black p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
@@ -86,10 +99,27 @@ export default function Navbar({ children }) {
                             aria-hidden="true"
                           />
                         </button>
+                      </Link> */}
+                      <Link to={"/cart"}>
+                        <span className="[&>svg]:w-5">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="h-5 w-5"
+                          >
+                            <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" />
+                          </svg>
+                        </span>
                       </Link>
-                      <span className="inline-flex items-center rounded-md bg-gray-50 px-1.5 py-0 mb-6 -ml-3 z-10 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                        5
-                      </span>
+
+                      {!cart.length ? (
+                        <span></span>
+                      ) : (
+                        <span class="absolute -mt-4 ml-2.5 rounded-full bg-red-600 px-[0.35em] py-[0.15em] text-[0.6rem] font-bold leading-none text-white">
+                          {cart.length}
+                        </span>
+                      )}
 
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3">

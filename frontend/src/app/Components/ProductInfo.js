@@ -82,9 +82,20 @@ export default function Example() {
 
   function handleAddToCart(productId) {
     if (cart) {
+      const discountedPrice = (
+        product.price -
+        (product.price * product.discountPercentage) / 100
+      ).toFixed(0);
+      console.log(discountedPrice);
       const index = cart.findIndex((item) => item.product.id === productId);
       if (index === -1) {
-        dispatch(addToCartApiAsync({ product: productId, quantity: 1 }));
+        dispatch(
+          addToCartApiAsync({
+            product: productId,
+            quantity: 1,
+            discountPrice: discountedPrice,
+          })
+        );
       } else {
         alert("Item is already added.");
       }
@@ -97,7 +108,7 @@ export default function Example() {
       console.log(params.id);
       dispatch(fetchProductByIdAsync(params.id));
     }
-  }, [params]);
+  }, [params, dispatch]);
 
   return (
     <>

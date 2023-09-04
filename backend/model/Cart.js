@@ -8,6 +8,7 @@ const cartSchema = new Schema({
     ref: "Product",
     required: true,
   },
+  discountPrice: { type: Number },
   user: { type: Schema.Types.ObjectId, required: true },
 });
 

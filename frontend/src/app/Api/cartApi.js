@@ -41,6 +41,8 @@ export function fetchCartByUser() {
 
 export function updateCartItem(item) {
   return new Promise(async (resolve, reject) => {
+    console.log(item.id);
+    console.log(item);
     try {
       const response = await fetch(`http://localhost:8080/cart/${item.id}`, {
         method: "PATCH",
@@ -63,10 +65,10 @@ export function deleteCartItemApi(itemId) {
     try {
       const response = await fetch(`http://localhost:8080/cart/${itemId}`, {
         method: "DELETE",
-        headers: { "contenty-type": "application/json" },
+        headers: { "content-type": "application/json" },
       });
       if (!response.ok) {
-        throw new Error();
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
       resolve({ data });
