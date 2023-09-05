@@ -5,7 +5,7 @@ import {
   selectCart,
   updateCartItemAsync,
 } from "../Slices/CartSlice";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 
 export default function Cart() {
@@ -18,7 +18,6 @@ export default function Cart() {
   function handleQuantity(item, value) {
     const newItem = { id: item.id, quantity: value };
     dispatch(updateCartItemAsync(newItem));
-    console.log(value);
   }
 
   function handleDeleteCartItem(itemId) {
@@ -148,9 +147,12 @@ export default function Cart() {
                     </p>
                   </div>
                 </div>
-                <button className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600">
-                  Check out
-                </button>
+
+                <Link to={"/checkout"}>
+                  <button className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600">
+                    Check out
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
