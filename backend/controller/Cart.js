@@ -49,3 +49,16 @@ exports.deleteCartItem = async (req, res) => {
     res.status(401).json(err);
   }
 };
+
+exports.deleteAllItems = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const cart = await Cart.deleteMany({ user: "64ee04bc89beda7c6d194bf5" });
+    console.log(id);
+    console.log(cart);
+    res.status(201).json(cart);
+  } catch (err) {
+    console.log(err);
+    res.status(401).json(err);
+  }
+};

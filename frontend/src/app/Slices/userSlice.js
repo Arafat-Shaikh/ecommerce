@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchCurrentUser, fetchUserOrders, updateUser } from "../Api/userApi";
+import {
+  fetchCurrentUser,
+  fetchUserDetails,
+  fetchUserOrders,
+  updateUser,
+} from "../Api/userApi";
 
 const initialState = {
   userDetails: "",
@@ -31,6 +36,14 @@ export const updateUserAsync = createAsyncThunk(
   }
 );
 
+export const fetchUserDetailsAsync = createAsyncThunk(
+  "user/fetchUserDetailsAsync",
+  async (user) => {
+    const response = await fetchUserDetails(user);
+    return response.data;
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -41,26 +54,33 @@ const userSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchCurrentUserAsync.fulfilled, (state, action) => {
-        state.status = "loading";
+        state.status = "idle";
         state.user = action.payload;
       })
       .addCase(updateUserAsync.pending, (state, action) => {
         state.status = "loading";
       })
       .addCase(updateUserAsync.fulfilled, (state, action) => {
-        state.status = "loading";
-        state.userOrders = action.payload;
+        state.status = "idle";
+        state.userDetails = action.payload;
       })
       .addCase(fetchUserOrdersAsync.pending, (state, action) => {
         state.status = "loading";
       })
       .addCase(fetchUserOrdersAsync.fulfilled, (state, action) => {
-        state.status = "loading";
+        state.status = "idle";
         state.userOrders = action.payload;
+      })
+      .addCase(fetchUserDetailsAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUserDetailsAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.userDetails = action.payload;
       });
   },
 });
 
-export const selectUser = (state) => state.user.userDetails;
+export const selectUserDetails = (state) => state.user.userDetails;
 export const selectUserOrders = (state) => state.user.userOrders;
 export default userSlice.reducer;

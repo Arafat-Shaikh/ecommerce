@@ -4,6 +4,7 @@ exports.updateUser = async (req, res) => {
   try {
     const { id } = req.user;
     console.log("updateId " + id);
+    console.log(req.body);
     const user = await User.findByIdAndUpdate(id, req.body, { new: true });
     console.log(user);
     res.status(201).json(user);

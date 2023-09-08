@@ -5,6 +5,6 @@ const router = express.Router();
 router
   .patch("/", updateUser)
   .delete("/", deleteUser)
-  .get("/search", fetchUserById);
+  .get("/info", fetchUserById);
 
 exports.router = router;

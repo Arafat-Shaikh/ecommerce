@@ -77,3 +77,21 @@ export function deleteCartItemApi(itemId) {
     }
   });
 }
+
+export function emptyCart() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`http://localhost:8080/cart`, {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      resolve({ data });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}

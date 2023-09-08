@@ -124,6 +124,11 @@ app.use("/cart", isAuth(), cartRouter.router);
 app.use("/orders", isAuth(), orderRouter.router);
 app.use("/users", isAuth(), userRouter.router);
 
+// app.use("/products", productsRouter.router);
+// app.use("/cart", cartRouter.router);
+// app.use("/orders", orderRouter.router);
+// app.use("/users", userRouter.router);
+
 app.use("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "build", "index.html"));
 });
