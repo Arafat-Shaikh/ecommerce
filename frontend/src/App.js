@@ -8,11 +8,14 @@ import ProductInfoPage from "./pages/ProductInfoPage";
 import CartPage from "./pages/CartPage";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCartByUserAsync, selectCart } from "./app/Slices/CartSlice";
-import Checkout from "./pages/CheckoutPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import LoginPage from "./pages/LoginPage";
+import Signup from "./pages/SignupPage";
+import { selectUserToken } from "./app/Slices/authSlice";
 
 const router = createBrowserRouter([
   {
-    path: "/products",
+    path: "/",
     element: <ProductListPage />,
   },
   {
@@ -25,15 +28,27 @@ const router = createBrowserRouter([
   },
   {
     path: "/checkout",
-    element: <Checkout />,
+    element: <CheckoutPage />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
   },
 ]);
 
 function App() {
   const dispatch = useDispatch();
+  const userToken = useSelector(selectUserToken);
+
   useEffect(() => {
-    dispatch(fetchCartByUserAsync());
-  }, []);
+    if (userToken) {
+      dispatch(fetchCartByUserAsync());
+    }
+  }, [dispatch, userToken]);
   return (
     <>
       <RouterProvider router={router} />

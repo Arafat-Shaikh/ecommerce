@@ -1,7 +1,7 @@
 export function fetchCurrentUser() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/users`);
+      const response = await fetch(`http://localhost:8080/users/search`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -14,7 +14,7 @@ export function fetchCurrentUser() {
   });
 }
 
-export function updateUser() {
+export function updateUser(user) {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await fetch(`http://localhost:8080/users`, {

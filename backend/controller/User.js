@@ -21,3 +21,13 @@ exports.deleteUser = async (req, res) => {
     res.status(401).json(err);
   }
 };
+
+exports.fetchUserById = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const user = await User.findById(id);
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(401).json(err);
+  }
+};

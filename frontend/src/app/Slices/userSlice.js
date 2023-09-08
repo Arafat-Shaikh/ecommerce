@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchCurrentUser, fetchUserOrders, updateUser } from "../Api/user";
+import { fetchCurrentUser, fetchUserOrders, updateUser } from "../Api/userApi";
 
 const initialState = {
-  user: "",
-  userOrders: "",
+  userDetails: "",
+  userOrders: [],
   status: "idle",
 };
 
@@ -25,8 +25,8 @@ export const fetchUserOrdersAsync = createAsyncThunk(
 
 export const updateUserAsync = createAsyncThunk(
   "user/updateUserAsync",
-  async () => {
-    const response = await updateUser();
+  async (user) => {
+    const response = await updateUser(user);
     return response.data;
   }
 );
@@ -61,6 +61,6 @@ const userSlice = createSlice({
   },
 });
 
-export const selectUser = (state) => state.user.user;
+export const selectUser = (state) => state.user.userDetails;
 export const selectUserOrders = (state) => state.user.userOrders;
 export default userSlice.reducer;

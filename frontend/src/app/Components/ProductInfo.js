@@ -93,7 +93,7 @@ export default function Example() {
           addToCartApiAsync({
             product: productId,
             quantity: 1,
-            discountPrice: discountedPrice,
+            discountPrice: Number(discountedPrice),
           })
         );
       } else {

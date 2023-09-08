@@ -5,6 +5,7 @@ const { filterUser } = require("../services/common");
 
 exports.signupUser = async (req, res) => {
   try {
+    console.log(req.body.password);
     const salt = crypto.randomBytes(16);
     crypto.pbkdf2(
       req.body.password,
@@ -21,7 +22,13 @@ exports.signupUser = async (req, res) => {
             res.status(401).json(err);
           } else {
             const token = jwt.sign(filterUser(doc), "SECRET_KEY");
-            res.status(201).json(token);
+            res
+              .cookie("jwt", token, {
+                expires: new Date(Date.now() + 3600000),
+                httpOnly: true,
+              })
+              .status(201)
+              .json(token);
           }
         });
       }
@@ -33,7 +40,18 @@ exports.signupUser = async (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
-  res.json(req.user);
+  try {
+    const user = req.user;
+    res
+      .cookie("jwt", user.token, {
+        expires: new Date(Date.now() + 3600000),
+        httpOnly: true,
+      })
+      .status(201)
+      .json(user.token);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 //this route is used for checking the session.

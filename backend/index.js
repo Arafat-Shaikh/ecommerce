@@ -12,10 +12,12 @@ const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const { User } = require("./model/User");
 const crypto = require("crypto");
-const { filterUser, isAuth } = require("./services/common");
+const { filterUser, isAuth, cookieExtract } = require("./services/common");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const path = require("path");
 
 main().catch((err) => console.log(err));
 
@@ -26,11 +28,13 @@ async function main() {
 
 const SECRET_KEY = "SECRET_KEY";
 const opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.jwtFromRequest = cookieExtract;
 opts.secretOrKey = SECRET_KEY;
 
+app.use(express.static(path.resolve(__dirname, "build")));
 app.use(cors({ exposedHeaders: ["X-DOCUMENT-COUNT"] }));
-app.use(express.json());
+
+app.use(cookieParser());
 app.use(
   session({
     // this will create session serialize and deserialize mentioned below.
@@ -41,6 +45,8 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(express.json());
 
 passport.use(
   // authenticate route for using this strategy as local.
@@ -65,7 +71,7 @@ passport.use(
               done(null, false, { message: "Invalid User" });
             } else {
               const token = jwt.sign(filterUser(user), SECRET_KEY);
-              return done(null, token);
+              return done(null, { token });
             }
           }
         );
@@ -113,10 +119,14 @@ passport.deserializeUser(function (user, done) {
 });
 
 app.use("/auth", authRouter.router);
-app.use("/products", productsRouter.router);
-app.use("/cart", cartRouter.router);
-app.use("/orders", orderRouter.router);
-app.use("/users", userRouter.router);
+app.use("/products", isAuth(), productsRouter.router);
+app.use("/cart", isAuth(), cartRouter.router);
+app.use("/orders", isAuth(), orderRouter.router);
+app.use("/users", isAuth(), userRouter.router);
+
+app.use("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "build", "index.html"));
+});
 
 app.listen(8080, () => {
   console.log("server is running.");

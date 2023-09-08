@@ -72,7 +72,7 @@ export default function Cart() {
                               </span>
                             </div>
                           </td>
-                          <td className="py-4">$19.99</td>
+                          <td className="py-4">${item.discountPrice}</td>
                           <td className="py-4">
                             <div className="flex items-center">
                               <button
@@ -106,17 +106,21 @@ export default function Cart() {
                               </button>
                             </div>
                           </td>
-                          <td className="py-4">$19.99</td>
+                          <td className="py-4">
+                            ${item.discountPrice * item.quantity}
+                          </td>
                         </tr>
 
                         {/* More product rows */}
                       </tbody>
                     </table>
-                    <div
-                      onClick={() => handleDeleteCartItem(item.id)}
-                      className="flex justify-end space-x-4 px-6 text-red-500"
-                    >
-                      <p className="text-sm cursor-pointer">remove</p>
+                    <div className="flex justify-end space-x-4 px-6 text-red-500">
+                      <p
+                        onClick={() => handleDeleteCartItem(item.id)}
+                        className="text-sm cursor-pointer"
+                      >
+                        remove
+                      </p>
                     </div>
                   </div>
                 ))}

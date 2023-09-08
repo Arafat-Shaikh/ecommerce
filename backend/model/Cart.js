@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const cartSchema = new Schema({
-  quantity: { type: Number, required: true },
   product: {
     type: Schema.Types.ObjectId,
     ref: "Product",
     required: true,
   },
+  quantity: { type: Number, required: true },
   discountPrice: { type: Number },
-  user: { type: Schema.Types.ObjectId, required: true },
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 const virtual = cartSchema.virtual("id");
