@@ -256,9 +256,18 @@ export default function Profile() {
                     <li className="text-xs text-gray-600 uppercase">
                       Address Details
                     </li>
-                    <li>{address.state}</li>
-                    <li>{address.city}</li>
-                    <li>{address.pinCode}</li>
+                    <li>
+                      State: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{address.state}
+                    </li>
+                    <li>
+                      City: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      {address.city}
+                    </li>
+                    <li>
+                      Street: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      {address.street}
+                    </li>
+                    <li>Pincode: &nbsp;&nbsp;{address.pinCode}</li>
                   </ul>
                 </div>
                 <div className="flex-none pt-2.5 pr-2.5 pl-1">

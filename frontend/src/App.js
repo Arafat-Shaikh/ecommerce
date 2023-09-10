@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import Signup from "./pages/SignupPage";
 import { selectUserToken } from "./app/Slices/authSlice";
 import ProfilePage from "./pages/ProfilePage";
+import UserOrdersPage from "./pages/UserOrdersPage";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <ProfilePage />,
+  },
+  {
+    path: "/user/orders",
+    element: <UserOrdersPage />,
   },
 ]);
 

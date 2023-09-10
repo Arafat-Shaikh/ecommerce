@@ -9,6 +9,7 @@ const orderSchema = new Schema({
   paymentType: { type: String, required: true },
   OrderStatus: { type: String, default: "pending" },
   address: { type: Schema.Types.Mixed, required: true },
+  createdAt: { type: String },
 });
 
 const virtual = orderSchema.virtual("id");

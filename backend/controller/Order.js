@@ -6,6 +6,7 @@ exports.createOrder = async (req, res) => {
     const doc = await order.save();
     res.status(201).json(doc);
   } catch (err) {
+    console.log(err);
     res.status(401).json(err);
   }
 };

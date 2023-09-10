@@ -19,6 +19,8 @@ import {
 import { ITEMS_PER_PAGE } from "../constants/Constants";
 import { Link } from "react-router-dom";
 import { fetchCartByUserAsync, selectCart } from "../Slices/CartSlice";
+import { selectUserDetails } from "../Slices/userSlice";
+import { selectUserToken } from "../Slices/authSlice";
 
 const sortOptions = [
   { name: "Top Rating", value: "rating", href: "#", current: false },
@@ -55,7 +57,6 @@ export default function Product() {
   const [searchValue, setSearchValue] = useState(null);
   const [searchedProducts, setSearchedProducts] = useState([]);
   const pagesCount = Math.ceil(totalProducts / ITEMS_PER_PAGE);
-  const cart = useSelector(selectCart);
   let products = searchedProducts.length ? searchedProducts : fetchedProducts;
 
   if (productsForFilter) {
