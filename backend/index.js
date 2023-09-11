@@ -28,7 +28,13 @@ async function main() {
 
 const SECRET_KEY = "SECRET_KEY";
 const opts = {};
-opts.jwtFromRequest = cookieExtract;
+opts.jwtFromRequest = function (req, res) {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies["jwt"];
+  }
+  return token;
+};
 opts.secretOrKey = SECRET_KEY;
 
 app.use(express.static(path.resolve(__dirname, "build")));
@@ -54,6 +60,7 @@ passport.use(
     { usernameField: "email" }, // here username field will change make email to use as a username.
     async function (email, password, done) {
       try {
+        console.log("you got here");
         const user = await User.findOne({ email: email });
         if (!user) {
           return done(null, false, { message: "Invalid User." });
@@ -90,7 +97,7 @@ passport.use(
     try {
       const user = await User.findById(jwt_payload.id);
       if (user) {
-        return done(null, user);
+        return done(null, filterUser(user));
       } else {
         return done(null, false);
         // or you could create a new account
@@ -119,8 +126,8 @@ passport.deserializeUser(function (user, done) {
 });
 
 app.use("/auth", authRouter.router);
-app.use("/products", isAuth(), productsRouter.router);
 app.use("/cart", isAuth(), cartRouter.router);
+app.use("/products", isAuth(), productsRouter.router);
 app.use("/orders", isAuth(), orderRouter.router);
 app.use("/users", isAuth(), userRouter.router);
 

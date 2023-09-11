@@ -7,7 +7,7 @@ export function fetchFilteredProducts({ pagination, sorting, selectFilters }) {
   console.log(queries);
 
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(`http://localhost:8080/products?${queries}`);
+    const response = await fetch(`/products?${queries}`);
     var header = response.headers.get("X-DOCUMENT-COUNT");
     const data = await response.json();
     resolve({ data: data, totalCount: header });
@@ -16,7 +16,7 @@ export function fetchFilteredProducts({ pagination, sorting, selectFilters }) {
 
 export function fetchProductFilters() {
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(`http://localhost:8080/products/filter`);
+    const response = await fetch(`/products/filter`);
     const data = await response.json();
     console.log(data);
     resolve({ data });
@@ -25,7 +25,7 @@ export function fetchProductFilters() {
 
 export function fetchProductById(id) {
   return new Promise(async (resolve, reject) => {
-    const response = await fetch(`http://localhost:8080/products/detail/${id}`);
+    const response = await fetch(`/products/detail/${id}`);
     const data = await response.json();
     console.log(data);
     resolve({ data });
@@ -35,7 +35,7 @@ export function fetchProductById(id) {
 export function createProductApi(product) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/products`, {
+      const response = await fetch(`/products`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(product),
@@ -51,13 +51,10 @@ export function createProductApi(product) {
 export function deleteProductApi(productId) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/product/${productId}`,
-        {
-          method: "DELETE",
-          headers: { "content-type": "application/json" },
-        }
-      );
+      const response = await fetch(`/product/${productId}`, {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+      });
       const data = await response.json();
       resolve({ data });
     } catch (err) {
@@ -69,15 +66,11 @@ export function deleteProductApi(productId) {
 export function updateProductApi(updatedProduct) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/product`,
-        updatedProduct.id,
-        {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(updatedProduct),
-        }
-      );
+      const response = await fetch(`/product`, updatedProduct.id, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(updatedProduct),
+      });
       const data = await response.json();
       resolve({ data });
     } catch (err) {

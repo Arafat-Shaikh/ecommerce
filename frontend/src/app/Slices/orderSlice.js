@@ -8,8 +8,9 @@ import {
 } from "../Api/orderApi";
 
 const initialState = {
-  orders: [],
+  allOrders: [],
   status: "idle",
+  userOrders: [],
 };
 
 export const createOrderApiAsync = createAsyncThunk(
@@ -62,7 +63,7 @@ const orderSlice = createSlice({
         state.status = "loading";
       })
       .addCase(createOrderApiAsync.fulfilled, (state, action) => {
-        state.orders.push(action.payload);
+        state.userOrders.push(action.payload);
         state.status = "idle";
       })
       .addCase(fetchAllOrdersAdminApiAsync.pending, (state, action) => {
@@ -91,9 +92,17 @@ const orderSlice = createSlice({
           (order) => order.id === action.payload.id
         );
         state.orders.splice(index, 1);
+      })
+      .addCase(fetchUserOrdersAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUserOrdersAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.userOrders = action.payload;
       });
   },
 });
 
 export const selectOrders = (state) => state.order.orders;
+export const selectUserOrders = (state) => state.order.userOrders;
 export default orderSlice.reducer;

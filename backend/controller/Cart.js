@@ -15,9 +15,12 @@ exports.addToCart = async (req, res) => {
 
 exports.getCartByUserId = async (req, res) => {
   try {
-    const { id } = req.user;
-    console.log("are you here " + id);
-    const cart = await Cart.find({ user: id }).populate("product");
+    // const { id } = req.user;
+    // console.log("are you here " + id);
+    console.log("are you at cart");
+    const cart = await Cart.find({ user: "64fe29db17b72ec9d3f8c596" }).populate(
+      "product"
+    );
     console.log("here is cart " + cart);
     res.status(201).json(cart);
   } catch (err) {

@@ -1,187 +1,204 @@
-import { Progress } from "@material-tailwind/react";
-const orders = [
-  {
-    id: "64fdd7fb79403a19ee20c125",
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserOrdersAsync, selectUserOrders } from "../Slices/userSlice";
+import { useEffect } from "react";
+// const orders = [
+//   {
+//     id: "64fdd7fb79403a19ee20c125",
 
-    items: [
-      {
-        product: {
-          id: "64efad0574e9dcfdadfd530f",
-          title: "iPhone 9",
-          description: "An apple mobile which is nothing like apple",
-          price: 993,
-          discountPercentage: 12.96,
-          rating: 0,
-          stock: 0,
-          brand: "Apple",
-          category: "smartphones",
-          thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-          images: [
-            "https://i.dummyjson.com/data/products/1/1.jpg",
-            "https://i.dummyjson.com/data/products/1/2.jpg",
-            "https://i.dummyjson.com/data/products/1/3.jpg",
-            "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-          ],
-          deleted: true,
-        },
-        quantity: 2,
-        discountPrice: 864,
-        id: "64fdd7ab79403a19ee20c11d",
-      },
-    ],
-    totalAmount: 864,
-    totalItems: 1,
-    user: {
-      $oid: "64ee04bc89beda7c6d194bf5",
-    },
-    paymentType: "cash",
-    OrderStatus: "pending",
-    address: {
-      name: "fahad",
-      email: "farman@gmail.com",
-      phone: "3784165385",
-      street: "western highway express",
-      city: "maldives",
-      state: "manhaten",
-      pinCode: "4629",
-    },
-    __v: 0,
-  },
-  {
-    id: "64fdd7fb79403a19ee20c125",
+//     items: [
+//       {
+//         product: {
+//           id: "64efad0574e9dcfdadfd530f",
+//           title: "iPhone 9",
+//           description: "An apple mobile which is nothing like apple",
+//           price: 993,
+//           discountPercentage: 12.96,
+//           rating: 0,
+//           stock: 0,
+//           brand: "Apple",
+//           category: "smartphones",
+//           thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+//           images: [
+//             "https://i.dummyjson.com/data/products/1/1.jpg",
+//             "https://i.dummyjson.com/data/products/1/2.jpg",
+//             "https://i.dummyjson.com/data/products/1/3.jpg",
+//             "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+//           ],
+//           deleted: true,
+//         },
+//         quantity: 2,
+//         discountPrice: 864,
+//         id: "64fdd7ab79403a19ee20c11d",
+//       },
+//     ],
+//     totalAmount: 864,
+//     totalItems: 1,
+//     user: {
+//       $oid: "64ee04bc89beda7c6d194bf5",
+//     },
+//     paymentType: "cash",
+//     OrderStatus: "pending",
+//     address: {
+//       name: "fahad",
+//       email: "farman@gmail.com",
+//       phone: "3784165385",
+//       street: "western highway express",
+//       city: "maldives",
+//       state: "manhaten",
+//       pinCode: "4629",
+//     },
+//     __v: 0,
+//   },
+//   {
+//     id: "64fdd7fb79403a19ee20c125",
 
-    items: [
-      {
-        product: {
-          id: "64efad0574e9dcfdadfd530f",
-          title: "iPhone 9",
-          description: "An apple mobile which is nothing like apple",
-          price: 993,
-          discountPercentage: 12.96,
-          rating: 0,
-          stock: 0,
-          brand: "Apple",
-          category: "smartphones",
-          thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-          images: [
-            "https://i.dummyjson.com/data/products/1/1.jpg",
-            "https://i.dummyjson.com/data/products/1/2.jpg",
-            "https://i.dummyjson.com/data/products/1/3.jpg",
-            "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-          ],
-          deleted: true,
-        },
-        quantity: 1,
-        discountPrice: 864,
-        id: "64fdd7ab79403a19ee20c11d",
-      },
-      {
-        product: {
-          id: "64efad0574e9dcfdadfd530f",
-          title: "iPhone 9",
-          description: "An apple mobile which is nothing like apple",
-          price: 993,
-          discountPercentage: 12.96,
-          rating: 0,
-          stock: 0,
-          brand: "Apple",
-          category: "smartphones",
-          thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-          images: [
-            "https://i.dummyjson.com/data/products/1/1.jpg",
-            "https://i.dummyjson.com/data/products/1/2.jpg",
-            "https://i.dummyjson.com/data/products/1/3.jpg",
-            "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-          ],
-          deleted: true,
-        },
-        quantity: 1,
-        discountPrice: 864,
-        id: "64fdd7ab79403a19ee20c11d",
-      },
-    ],
-    totalAmount: 864,
-    totalItems: 1,
-    user: {
-      $oid: "64ee04bc89beda7c6d194bf5",
-    },
-    paymentType: "cash",
-    OrderStatus: "pending",
-    address: {
-      name: "fahad",
-      email: "farman@gmail.com",
-      phone: "3784165385",
-      street: "western highway express",
-      city: "maldives",
-      state: "manhaten",
-      pinCode: "4629",
-    },
-    __v: 0,
-  },
-];
-const cart = [
-  {
-    quantity: 2,
-    product: {
-      id: 1,
-      title: "iPhone 9",
-      description: "An apple mobile which is nothing like apple",
-      price: 993,
-      discountPercentage: 12.96,
-      rating: 0,
-      stock: 0,
-      brand: "Apple",
-      category: "smartphones",
-      thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-      images: [
-        "https://i.dummyjson.com/data/products/1/1.jpg",
-        "https://i.dummyjson.com/data/products/1/2.jpg",
-        "https://i.dummyjson.com/data/products/1/3.jpg",
-        "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-      ],
-      deleted: true,
-    },
-    discountPrice: 342,
-  },
-  {
-    quantity: 2,
-    product: {
-      id: 3,
-      title: "Samsung Universe 9",
-      description:
-        "Samsung's new variant which goes beyond Galaxy to the Universe",
-      price: 1249,
-      discountPercentage: 15.46,
-      rating: 4.09,
-      stock: 36,
-      brand: "Samsung",
-      category: "smartphones",
-      thumbnail: "https://i.dummyjson.com/data/products/3/thumbnail.jpg",
-      images: ["https://i.dummyjson.com/data/products/3/1.jpg"],
-      deleted: true,
-    },
-    discountPrice: 342,
-  },
-];
+//     items: [
+//       {
+//         product: {
+//           id: "64efad0574e9dcfdadfd530f",
+//           title: "iPhone 9",
+//           description: "An apple mobile which is nothing like apple",
+//           price: 993,
+//           discountPercentage: 12.96,
+//           rating: 0,
+//           stock: 0,
+//           brand: "Apple",
+//           category: "smartphones",
+//           thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+//           images: [
+//             "https://i.dummyjson.com/data/products/1/1.jpg",
+//             "https://i.dummyjson.com/data/products/1/2.jpg",
+//             "https://i.dummyjson.com/data/products/1/3.jpg",
+//             "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+//           ],
+//           deleted: true,
+//         },
+//         quantity: 1,
+//         discountPrice: 864,
+//         id: "64fdd7ab79403a19ee20c11d",
+//       },
+//       {
+//         product: {
+//           id: "64efad0574e9dcfdadfd530f",
+//           title: "iPhone 9",
+//           description: "An apple mobile which is nothing like apple",
+//           price: 993,
+//           discountPercentage: 12.96,
+//           rating: 0,
+//           stock: 0,
+//           brand: "Apple",
+//           category: "smartphones",
+//           thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+//           images: [
+//             "https://i.dummyjson.com/data/products/1/1.jpg",
+//             "https://i.dummyjson.com/data/products/1/2.jpg",
+//             "https://i.dummyjson.com/data/products/1/3.jpg",
+//             "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+//           ],
+//           deleted: true,
+//         },
+//         quantity: 1,
+//         discountPrice: 864,
+//         id: "64fdd7ab79403a19ee20c11d",
+//       },
+//     ],
+//     totalAmount: 864,
+//     totalItems: 1,
+//     user: {
+//       $oid: "64ee04bc89beda7c6d194bf5",
+//     },
+//     paymentType: "cash",
+//     OrderStatus: "pending",
+//     address: {
+//       name: "fahad",
+//       email: "farman@gmail.com",
+//       phone: "3784165385",
+//       street: "western highway express",
+//       city: "maldives",
+//       state: "manhaten",
+//       pinCode: "4629",
+//     },
+//     __v: 0,
+//   },
+// ];
+// const cart = [
+//   {
+//     quantity: 2,
+//     product: {
+//       id: 1,
+//       title: "iPhone 9",
+//       description: "An apple mobile which is nothing like apple",
+//       price: 993,
+//       discountPercentage: 12.96,
+//       rating: 0,
+//       stock: 0,
+//       brand: "Apple",
+//       category: "smartphones",
+//       thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+//       images: [
+//         "https://i.dummyjson.com/data/products/1/1.jpg",
+//         "https://i.dummyjson.com/data/products/1/2.jpg",
+//         "https://i.dummyjson.com/data/products/1/3.jpg",
+//         "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+//       ],
+//       deleted: true,
+//     },
+//     discountPrice: 342,
+//   },
+//   {
+//     quantity: 2,
+//     product: {
+//       id: 3,
+//       title: "Samsung Universe 9",
+//       description:
+//         "Samsung's new variant which goes beyond Galaxy to the Universe",
+//       price: 1249,
+//       discountPercentage: 15.46,
+//       rating: 4.09,
+//       stock: 36,
+//       brand: "Samsung",
+//       category: "smartphones",
+//       thumbnail: "https://i.dummyjson.com/data/products/3/thumbnail.jpg",
+//       images: ["https://i.dummyjson.com/data/products/3/1.jpg"],
+//       deleted: true,
+//     },
+//     discountPrice: 342,
+//   },
+// ];
 
 export default function UserOrders() {
+  const orders = useSelector(selectUserOrders);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchUserOrdersAsync());
+  }, []);
+
+  console.log(orders);
   return (
     <div className="bg-gray-200 px-4 py-6 rounded-lg ">
       {orders.map((order) => (
         <>
           <div className="bg-white rounded-lg shadow-md p-6 mb-4 lg:w-1/2 mx-auto md:w-3/4 ">
-            <div className="flex justify-evenly mb-5">
-              <h1 className=" lg:text-2xl md:text-2xl text-xs uppercase ">
+            <div className="flex mb-2">
+              <h1 className=" lg:text-xl md:text-2xl text-xs uppercase ">
                 Order Id:{" "}
               </h1>
-              <p className="lg:text-lg md:text-lg text-xs rounded-full px-2 py-1 bg-yellow-100 ">
-                {order.id}
+              <p className="ml-2 lg:text-lg md:text-lg text-xs rounded-full px-2 py-0 text-amber-800 bg-yellow-100 ">
+                #{order.id}
               </p>
-              <hr></hr>
             </div>
+            <div className="flex items-center  mb-5">
+              <h1 className=" lg:text-md md:text-sm text-xs uppercase ">
+                Order Date:{" "}
+              </h1>
+              <p className="lg:text-xs md:text-xs text-xs rounded-full px-2 py-1  ml-2">
+                {order.createdAt}
+              </p>
+            </div>
+            <hr className="mb-2"></hr>
 
             <div className="flex justify-between">
-              <p className="w-1/3">Product</p>
+              <p className="w-1/3 text-green-600">Item</p>
               <p className="w-1/4">Price</p>
               <p className="w-1/4">Qty</p>
               <p className="w-1/4">Amount</p>
@@ -197,14 +214,35 @@ export default function UserOrders() {
                       alt="Product image"
                     />
                     <p className="text-sm mt-3">{item.product.title}</p>
+                    <p className="text-xs mt-1 text-amber-600">
+                      {item.product.brand}
+                    </p>
                   </div>
 
-                  <p className="w-1/4">${item.discountPrice}.99</p>
-                  <p className="w-1/4">{item.quantity}</p>
-                  <p className="w-1/4">${order.totalAmount}</p>
+                  <p className="w-1/4 text-gray-500">
+                    ${item.discountPrice}.99
+                  </p>
+                  <p className="w-1/4 text-gray-500 px-2 py-2 rounded-xl border-lime-700">
+                    {item.quantity}
+                  </p>
+                  <p className="w-1/4 text-gray-500">
+                    ${item.quantity * item.discountPrice}
+                  </p>
                 </div>
               </>
             ))}
+            <hr className="m-4"></hr>
+            <div>
+              <div className="flex justify-evenly">
+                <p className="text-md font-semibold">&nbsp;&nbsp;Sub total:</p>
+                <p>${order.totalAmount}</p>
+              </div>
+              <div className="flex justify-evenly">
+                <p className="text-md font-semibold">Total Items:</p>
+                <p>{order.items.length}</p>
+              </div>
+            </div>
+            <hr className="m-4"></hr>
             <div className="mt-4">
               <p className="flex">
                 <svg

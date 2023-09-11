@@ -14,6 +14,10 @@ import Signup from "./pages/SignupPage";
 import { selectUserToken } from "./app/Slices/authSlice";
 import ProfilePage from "./pages/ProfilePage";
 import UserOrdersPage from "./pages/UserOrdersPage";
+import {
+  fetchCurrentUserAsync,
+  fetchUserDetailsAsync,
+} from "./app/Slices/userSlice";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +63,7 @@ function App() {
       dispatch(fetchCartByUserAsync());
     }
   }, [dispatch, userToken]);
+
   return (
     <>
       <RouterProvider router={router} />

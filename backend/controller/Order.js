@@ -2,7 +2,16 @@ const { Order } = require("../model/Order");
 
 exports.createOrder = async (req, res) => {
   try {
-    const order = new Order(req.body);
+    const dateString = new Date();
+
+    const year = dateString.getFullYear();
+    const month = dateString.getMonth();
+    const day = dateString.getDate();
+
+    const order = new Order({
+      ...req.body,
+      createdAt: { year: year, month: month, day: day, date: dateString },
+    });
     const doc = await order.save();
     res.status(201).json(doc);
   } catch (err) {

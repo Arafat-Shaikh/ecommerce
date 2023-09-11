@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -6,8 +6,10 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCart } from "../Slices/CartSlice";
+import { fetchCartByUser } from "../Api/cartApi";
+import { selectUserToken } from "../Slices/authSlice";
 
 const profilePicture = {
   name: "Tom Cook",
@@ -22,7 +24,7 @@ const navigation = [
 ];
 const userNavigation = [
   { name: "Account", link: "/profile" },
-  { name: "Order history", link: "/user-orders" },
+  { name: "Order history", link: "/user/orders" },
   { name: "Sign out", link: "/logout" },
 ];
 const user = {
@@ -35,6 +37,11 @@ function classNames(...classes) {
 
 export default function Navbar({ children }) {
   const cart = useSelector(selectCart);
+  const dispatch = useDispatch();
+  const userToken = useSelector(selectUserToken);
+  // useEffect(() => {
+  //   if (userToken) dispatch(fetchCartByUser());
+  // }, [dispatch]);
   return (
     <>
       <div className="min-h-full">

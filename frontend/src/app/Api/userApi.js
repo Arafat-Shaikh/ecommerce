@@ -18,7 +18,7 @@ export function updateUser(user) {
   return new Promise(async (resolve, reject) => {
     console.log(user);
     try {
-      const response = await fetch(`http://localhost:8080/users`, {
+      const response = await fetch(`/users`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(user),
@@ -38,7 +38,7 @@ export function updateUser(user) {
 export function fetchUserOrders() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/users`);
+      const response = await fetch(`/orders/user`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -53,7 +53,7 @@ export function fetchUserOrders() {
 export function fetchUserDetails() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/users/info`);
+      const response = await fetch(`/users/info`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }

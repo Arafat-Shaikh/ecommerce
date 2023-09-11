@@ -42,6 +42,7 @@ exports.signupUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const user = req.user;
+    console.log("login user here" + JSON.stringify(user));
     res
       .cookie("jwt", user.token, {
         expires: new Date(Date.now() + 3600000),

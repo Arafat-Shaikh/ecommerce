@@ -27,7 +27,7 @@ export default function Cart() {
   return (
     <>
       {!cart.length ? (
-        <Navigate to="/products" replace={true}></Navigate>
+        <Navigate to="/" replace={true}></Navigate>
       ) : (
         <div>
           <style>
