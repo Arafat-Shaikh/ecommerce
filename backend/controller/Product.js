@@ -37,7 +37,7 @@ exports.fetchFilteredProducts = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.perPage) || 6;
     let query = Product.find({});
-    let productCount = "";
+    let productCount = Product.find({});
 
     const sort = req.query.sort;
     const sortValue = req.query.order == "asc" ? 1 : -1;
@@ -47,23 +47,25 @@ exports.fetchFilteredProducts = async (req, res) => {
     }
 
     if (req.query.category) {
-      query = query.find({ category: req.query.category });
+      query = query.find({ category: { $in: req.query.category.split(",") } });
+      productCount = productCount.find({
+        category: { $in: req.query.category.split(",") },
+      });
     }
 
     if (req.query.brand) {
-      query = query.find({ brand: req.query.brand });
+      query = query.find({ brand: { $in: req.query.brand.split(",") } });
+      productCount = productCount.find({
+        brand: { $in: req.query.brand.split(",") },
+      });
     }
 
+    const docCount = await productCount.count();
     query = query.skip((page - 1) * pageSize).limit(pageSize);
-
-    if (req.query.category || req.query.brand) {
-      productCount = await Product.countDocuments(query);
-    } else {
-      productCount = await Product.countDocuments();
-    }
+    console.log(docCount);
 
     const docs = await query.exec();
-    res.set("X-DOCUMENT-COUNT", productCount);
+    res.set("X-DOCUMENT-COUNT", docCount);
     res.status(201).json(docs);
   } catch (err) {
     res.status(401).json(err);

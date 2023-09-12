@@ -106,15 +106,22 @@ export default function Product() {
     let testFilter = { ...selectFilters };
     if (e.target.checked) {
       setSearchedProducts([]);
-      testFilter = { ...selectFilters, [smSectionName]: option };
-      setSelectFilter(testFilter);
-    } else {
-      if (selectFilters[smSectionName]) {
-        delete testFilter[smSectionName];
-        setSelectFilter(testFilter);
+      // testFilter = { ...selectFilters, [smSectionName]: option };
+      if (testFilter[smSectionName]) {
+        console.log(option);
+        testFilter[smSectionName].push(option);
+      } else {
+        testFilter[smSectionName] = [option];
       }
+      // setSelectFilter(testFilter);
+    } else {
+      // delete testFilter[smSectionName];
+      const index = testFilter[smSectionName].indexOf(option);
+      console.log(index);
+      testFilter[smSectionName].splice(index, 1);
     }
-    console.log(selectFilters);
+    console.log(testFilter);
+    setSelectFilter(testFilter);
   }
 
   function handleSort(value) {
