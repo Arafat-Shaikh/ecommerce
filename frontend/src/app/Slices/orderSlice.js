@@ -11,6 +11,7 @@ const initialState = {
   allOrders: [],
   status: "idle",
   userOrders: [],
+  receivedOrderId: null,
 };
 
 export const createOrderApiAsync = createAsyncThunk(
@@ -56,7 +57,11 @@ export const deleteOrderAsync = createAsyncThunk(
 const orderSlice = createSlice({
   name: "order",
   initialState,
-  reducers: {},
+  reducers: {
+    resetReceivedOrderId(state, action) {
+      state.receivedOrderId = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createOrderApiAsync.pending, (state, action) => {
@@ -64,6 +69,7 @@ const orderSlice = createSlice({
       })
       .addCase(createOrderApiAsync.fulfilled, (state, action) => {
         state.userOrders.push(action.payload);
+        state.receivedOrderId = action.payload.id;
         state.status = "idle";
       })
       .addCase(fetchAllOrdersAdminApiAsync.pending, (state, action) => {
@@ -105,4 +111,6 @@ const orderSlice = createSlice({
 
 export const selectOrders = (state) => state.order.orders;
 export const selectUserOrders = (state) => state.order.userOrders;
+export const selectReceivedOrder = (state) => state.order.receivedOrderId;
+export const { resetReceivedOrderId } = orderSlice.actions;
 export default orderSlice.reducer;

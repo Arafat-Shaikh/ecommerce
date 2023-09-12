@@ -18,6 +18,7 @@ import {
   fetchCurrentUserAsync,
   fetchUserDetailsAsync,
 } from "./app/Slices/userSlice";
+import OrderPlaced from "./pages/OrderPlaced";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
     path: "/user/orders",
     element: <UserOrdersPage />,
   },
+  {
+    path: "/order/placed",
+    element: <OrderPlaced />,
+  },
 ]);
 
 function App() {
@@ -59,9 +64,10 @@ function App() {
   const userToken = useSelector(selectUserToken);
 
   useEffect(() => {
-    if (userToken) {
-      dispatch(fetchCartByUserAsync());
-    }
+    dispatch(fetchCartByUserAsync());
+
+    console.log("hello");
+    console.log(userToken);
   }, [dispatch, userToken]);
 
   return (

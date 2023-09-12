@@ -15,12 +15,10 @@ exports.addToCart = async (req, res) => {
 
 exports.getCartByUserId = async (req, res) => {
   try {
-    // const { id } = req.user;
-    // console.log("are you here " + id);
+    const { id } = req.user;
+    console.log("are you here " + id);
     console.log("are you at cart");
-    const cart = await Cart.find({ user: "64fe29db17b72ec9d3f8c596" }).populate(
-      "product"
-    );
+    const cart = await Cart.find({ user: id }).populate("product");
     console.log("here is cart " + cart);
     res.status(201).json(cart);
   } catch (err) {
@@ -56,7 +54,7 @@ exports.deleteCartItem = async (req, res) => {
 exports.deleteAllItems = async (req, res) => {
   try {
     const { id } = req.user;
-    const cart = await Cart.deleteMany({ user: "64ee04bc89beda7c6d194bf5" });
+    const cart = await Cart.deleteMany({ user: id });
     console.log(id);
     console.log(cart);
     res.status(201).json(cart);

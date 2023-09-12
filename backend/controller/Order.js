@@ -4,13 +4,9 @@ exports.createOrder = async (req, res) => {
   try {
     const dateString = new Date();
 
-    const year = dateString.getFullYear();
-    const month = dateString.getMonth();
-    const day = dateString.getDate();
-
     const order = new Order({
       ...req.body,
-      createdAt: { year: year, month: month, day: day, date: dateString },
+      createdAt: dateString,
     });
     const doc = await order.save();
     res.status(201).json(doc);

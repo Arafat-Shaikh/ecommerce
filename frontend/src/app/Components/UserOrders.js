@@ -189,10 +189,18 @@ export default function UserOrders() {
             </div>
             <div className="flex items-center  mb-5">
               <h1 className=" lg:text-md md:text-sm text-xs uppercase ">
-                Order Date:{" "}
+                Date:{" "}
               </h1>
               <p className="lg:text-xs md:text-xs text-xs rounded-full px-2 py-1  ml-2">
                 {order.createdAt}
+              </p>
+            </div>
+            <div className="flex items-center  mb-5">
+              <h1 className=" lg:text-md md:text-sm text-xs uppercase ">
+                Status:{" "}
+              </h1>
+              <p className="lg:text-xs md:text-xs text-xs rounded-full px-2 py-1  ml-2">
+                {order.orderStatus}
               </p>
             </div>
             <hr className="mb-2"></hr>
@@ -282,6 +290,19 @@ export default function UserOrders() {
                 </p>
               </div>
             </div>
+            {/* <div className="m-4 flex">
+              <div className="flex-1">
+                <p className="">Order Placed</p>
+                <p className="mt-5">Processed</p>
+                <p className="mt-5">Shipped</p>
+                <p className="mt-5">Delivered</p>
+              </div>
+              <div className="flex-1">
+                <div className="mt-2 h-36 w-2 bg-gray-300 rounded-t-full rounded-b-full">
+                  <div className="mt-2 h-3 w-2 bg-green-600 rounded-t-full rounded-b-full"></div>
+                </div>
+              </div>
+            </div> */}
           </div>
         </>
       ))}

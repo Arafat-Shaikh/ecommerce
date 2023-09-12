@@ -63,15 +63,6 @@ export default function CheckoutPage() {
     dispatch(updateCartItemAsync(newItem));
   }
 
-  function handleDeleteCartItem(itemId) {
-    dispatch(deleteItemApiAsync(itemId));
-  }
-
-  function handleAddress(index) {
-    const selectedAddress = userDetails.addresses[index];
-    setAddress(selectedAddress);
-  }
-
   const onSubmit = (data) => {
     console.log(data);
     const copyUser = { ...userDetails };
@@ -106,13 +97,24 @@ export default function CheckoutPage() {
     }
   }
 
+  function handleDeleteCartItem(itemId) {
+    dispatch(deleteItemApiAsync(itemId));
+  }
+
+  function handleAddress(index) {
+    const selectedAddress = userDetails.addresses[index];
+    setAddress(selectedAddress);
+  }
+
   useEffect(() => {
     dispatch(fetchUserDetailsAsync());
   }, [dispatch]);
 
   return (
     <>
-      {!cart.length && <Navigate to={"/"} replace={true}></Navigate>}
+      {!cart.length && (
+        <Navigate to={"/order/placed"} replace={true}></Navigate>
+      )}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
           <div className="lg:col-span-3">
@@ -522,9 +524,10 @@ export default function CheckoutPage() {
                   Shipping and taxes calculated at checkout.
                 </p>
                 <div className="mt-6">
+                  <Link to={`/order/placed}`}></Link>
                   <div
                     onClick={() => handleProcess()}
-                    className="flex cursor-pointer items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                    className="flex cur00sor-pointer items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                   >
                     Order Now
                   </div>
