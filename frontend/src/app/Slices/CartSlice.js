@@ -48,8 +48,8 @@ export const deleteItemApiAsync = createAsyncThunk(
 
 export const emptyCartAsync = createAsyncThunk(
   "cart/emptyCartAsync",
-  async (itemId) => {
-    const response = await emptyCart(itemId);
+  async () => {
+    const response = await emptyCart();
     return response.data;
   }
 );

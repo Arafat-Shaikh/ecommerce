@@ -200,7 +200,7 @@ export default function UserOrders() {
                 Status:{" "}
               </h1>
               <p className="lg:text-xs md:text-xs text-xs rounded-full px-2 py-1  ml-2">
-                {order.orderStatus}
+                {order.status}
               </p>
             </div>
             <hr className="mb-2"></hr>

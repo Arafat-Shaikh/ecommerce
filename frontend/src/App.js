@@ -19,6 +19,7 @@ import {
   fetchUserDetailsAsync,
 } from "./app/Slices/userSlice";
 import OrderPlaced from "./pages/OrderPlaced";
+import AdminProductPage from "./pages/AdminProductPage";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
   {
     path: "/order/placed",
     element: <OrderPlaced />,
+  },
+  {
+    path: "/admin/productList",
+    element: <AdminProductPage />,
   },
 ]);
 

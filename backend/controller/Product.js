@@ -60,7 +60,7 @@ exports.fetchFilteredProducts = async (req, res) => {
       });
     }
 
-    const docCount = await productCount.count();
+    const docCount = await productCount.count().exec();
     query = query.skip((page - 1) * pageSize).limit(pageSize);
     console.log(docCount);
 
