@@ -21,6 +21,8 @@ import { Link } from "react-router-dom";
 import { fetchCartByUserAsync, selectCart } from "../Slices/CartSlice";
 import { selectUserDetails } from "../Slices/userSlice";
 import { selectUserToken } from "../Slices/authSlice";
+import { useForm } from "react-hook-form";
+import { createPortal } from "react-dom";
 
 const sortOptions = [
   { name: " Low to High", value: "asc", href: "#", current: false },
@@ -341,6 +343,9 @@ export default function AdminProductList() {
                             <button className="bg-yellow-600 hover:bg-yellow-700 px-2 py-1 rounded-xl">
                               Add+
                             </button>
+                            <div className="clipping-container">
+                              <PortalExample />
+                            </div>
                           </th>
                           <th scope="col" className="px-6 py-3">
                             <span className="sr-only">Edit</span>
@@ -398,6 +403,31 @@ export default function AdminProductList() {
           </section>
         </main>
       </div>
+    </div>
+  );
+}
+
+function PortalExample() {
+  const [showModal, setShowModal] = useState(false);
+  return (
+    <>
+      <button onClick={() => setShowModal(true)}>
+        Show modal using a portal
+      </button>
+      {showModal &&
+        createPortal(
+          <ModalContent onClose={() => setShowModal(false)} />,
+          document.body
+        )}
+    </>
+  );
+}
+
+function ModalContent({ onClose }) {
+  return (
+    <div className="modal">
+      <div>I'm a modal dialog</div>
+      <button onClick={onClose}>Close</button>
     </div>
   );
 }
