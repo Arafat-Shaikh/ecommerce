@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  fetchAllUsers,
   fetchCurrentUser,
   fetchUserDetails,
   fetchUserOrders,
@@ -10,6 +11,7 @@ const initialState = {
   userDetails: "",
   userOrders: [],
   status: "idle",
+  allUsers: "",
 };
 
 export const fetchCurrentUserAsync = createAsyncThunk(
@@ -40,6 +42,14 @@ export const fetchUserDetailsAsync = createAsyncThunk(
   "user/fetchUserDetailsAsync",
   async () => {
     const response = await fetchUserDetails();
+    return response.data;
+  }
+);
+
+export const fetchAllUsersAsync = createAsyncThunk(
+  "user/fetchAllUsersAsync",
+  async () => {
+    const response = await fetchAllUsers();
     return response.data;
   }
 );
@@ -77,10 +87,18 @@ const userSlice = createSlice({
       .addCase(fetchUserDetailsAsync.fulfilled, (state, action) => {
         state.status = "idle";
         state.userDetails = action.payload;
+      })
+      .addCase(fetchAllUsersAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAllUsersAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.allUsers = action.payload;
       });
   },
 });
 
 export const selectUserDetails = (state) => state.user.userDetails;
 export const selectUserOrders = (state) => state.user.userOrders;
+export const selectAllUser = (state) => state.user.allUsers;
 export default userSlice.reducer;

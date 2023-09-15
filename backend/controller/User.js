@@ -32,3 +32,13 @@ exports.fetchUserById = async (req, res) => {
     res.status(401).json(err);
   }
 };
+
+exports.fetchAllUsersInfo = async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(201).json(users);
+  } catch (err) {
+    console.log(err);
+    res.status(401).json(err);
+  }
+};

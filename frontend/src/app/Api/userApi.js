@@ -64,3 +64,18 @@ export function fetchUserDetails() {
     }
   });
 }
+
+export function fetchAllUsers() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`/users`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      resolve({ data });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}

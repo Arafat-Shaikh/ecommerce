@@ -40,6 +40,7 @@ export function fetchOrderByUser() {
 
 export function updateOrderAdmin(updatedOrder) {
   return new Promise(async (resolve, reject) => {
+    console.log(updatedOrder);
     try {
       const response = await fetch(`/orders/${updatedOrder.id}`, {
         method: "PATCH",
@@ -56,8 +57,9 @@ export function updateOrderAdmin(updatedOrder) {
 
 export function deleteOrderApi(orderId) {
   return new Promise(async (resolve, reject) => {
+    console.log(orderId);
     try {
-      const response = await fetch(`/order/${orderId}`, {
+      const response = await fetch(`/orders/${orderId}`, {
         method: "DELETE",
         headers: { "content-type": "application/json" },
       });
