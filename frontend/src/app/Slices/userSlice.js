@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  deleteUser,
   fetchAllUsers,
   fetchCurrentUser,
   fetchUserDetails,
@@ -11,7 +12,7 @@ const initialState = {
   userDetails: "",
   userOrders: [],
   status: "idle",
-  allUsers: "",
+  allUsers: [],
 };
 
 export const fetchCurrentUserAsync = createAsyncThunk(
@@ -50,6 +51,15 @@ export const fetchAllUsersAsync = createAsyncThunk(
   "user/fetchAllUsersAsync",
   async () => {
     const response = await fetchAllUsers();
+    console.log(response.data);
+    return response.data;
+  }
+);
+
+export const deleteUserAsync = createAsyncThunk(
+  "users/deleteUserAsync",
+  async (user) => {
+    const response = await deleteUser(user);
     return response.data;
   }
 );
@@ -72,7 +82,17 @@ const userSlice = createSlice({
       })
       .addCase(updateUserAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        state.userDetails = action.payload;
+        if (action.payload.id) {
+          state.userDetails = action.payload;
+        } else {
+          let role = action.payload.role;
+          let email = action.payload.email;
+          const updatedUser = state.allUsers.find((u) => u.email === email);
+          updatedUser.email = email;
+          updatedUser.role = role;
+          const index = state.allUsers.findIndex((u) => u.email === email);
+          state.allUsers.splice(index, 1, updatedUser);
+        }
       })
       .addCase(fetchUserOrdersAsync.pending, (state, action) => {
         state.status = "loading";
@@ -94,6 +114,21 @@ const userSlice = createSlice({
       .addCase(fetchAllUsersAsync.fulfilled, (state, action) => {
         state.status = "idle";
         state.allUsers = action.payload;
+      })
+      .addCase(deleteUserAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(deleteUserAsync.fulfilled, (state, action) => {
+        state.status = "idle";
+        if (action.payload.id) {
+          state.userDetails = "";
+        } else {
+          let email = action.payload.email;
+          const index = state.allUsers.findIndex(
+            (user) => user.email === email
+          );
+          state.allUsers.splice(index, 1);
+        }
       });
   },
 });
