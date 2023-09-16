@@ -38,3 +38,18 @@ export function loginUser(user) {
     }
   });
 }
+
+export function logoutUser() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`/auth/logout`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      resolve({ data });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}

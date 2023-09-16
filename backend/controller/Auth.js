@@ -55,6 +55,15 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+exports.signOutUser = (req, res, next) => {
+  res
+    .cookie("jwt", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    })
+    .sendStatus(200);
+};
+
 //this route is used for checking the session.
 exports.checkUser = async (req, res) => {
   res.json(req.user);

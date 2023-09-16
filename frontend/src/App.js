@@ -20,6 +20,7 @@ import {
 } from "./app/Slices/userSlice";
 import OrderPlaced from "./pages/OrderPlaced";
 import AdminProductPage from "./pages/AdminProductPage";
+import LogoutPage from "./pages/LogoutPage";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
   {
     path: "/admin/productList",
     element: <AdminProductPage />,
+  },
+  {
+    path: "/logout",
+    element: <LogoutPage />,
   },
 ]);
 
