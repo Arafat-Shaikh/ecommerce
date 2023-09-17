@@ -1,7 +1,6 @@
 const express = require("express");
 const {
   updateUser,
-  deleteUser,
   fetchUserById,
   fetchAllUsersInfo,
   updateAdminUser,
@@ -14,6 +13,6 @@ router
   .get("/info", fetchUserById)
   .get("/", fetchAllUsersInfo)
   .patch("/admin", updateAdminUser)
-  .delete("/admin/", adminDeleteUser);
+  .delete("/admin/:id", adminDeleteUser);
 
 exports.router = router;

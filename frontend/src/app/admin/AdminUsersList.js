@@ -7,24 +7,28 @@ import {
 } from "../Slices/userSlice";
 import { useEffect, useState } from "react";
 import { selectAllOrders } from "../Slices/orderSlice";
+import { emptyCartAsync } from "../Slices/CartSlice";
 
 export default function Users() {
   const dispatch = useDispatch();
   const fetchedUsers = useSelector(selectAllUser);
   const orders = useSelector(selectAllOrders);
-  const [users, setUsers] = useState();
   const [filter, setFilter] = useState("all");
+  const uniqueUsers = new Set(orders.map((order) => order.user));
+  const [users, setUsers] = useState();
 
-  function handleUserRoleChange(e, index) {
-    const copiedUsers = [...users];
-    let singleUser = { ...copiedUsers[index] };
+  function handleUserRoleChange(e, userId) {
+    const copiedUsers = [...fetchedUsers];
+    let user = copiedUsers.find((user) => user.id === userId);
+    let singleUser = { ...user };
     singleUser.role = e.target.value;
     dispatch(adminUpdateUserAsync(singleUser));
   }
 
-  function handleUserDelete(userEmail) {
-    const deleteUser = users.find((user) => user.email === userEmail);
-    dispatch(adminDeleteUserAsync(deleteUser));
+  function handleUserDelete(userId) {
+    if (fetchedUsers) {
+      dispatch(adminDeleteUserAsync(userId));
+    }
   }
 
   function handleUserOrder(userId) {
@@ -33,31 +37,39 @@ export default function Users() {
     return orderCount;
   }
 
-  function showCustomers(value) {
-    if (value === "customers") {
-      const uniqueUsers = new Set(orders.map((order) => order.user));
-      return uniqueUsers.size;
-    } else {
-      const userCount = fetchedUsers.length;
-      return userCount;
-    }
+  function showCustomers(value) {}
+
+  function getCustomerDetails(userId) {
+    return fetchedUsers.find((u) => u.id === userId);
   }
 
   useEffect(() => {
-    if (filter === "all") {
-      setUsers(fetchedUsers);
-    } else if (filter === "customers") {
-      // get all the users id's from the orders.
-      // then get all the userDetails who's id's you got.
-      // let customerTypeUser = [];
-      // const uniqueUsers = new Set(orders.map((order) => order.user));
-      // console.log(uniqueUsers);
+    if (fetchedUsers) {
+      let filteredUser = [];
+      if (filter === "all") {
+        filteredUser = fetchedUsers;
+        setUsers(filteredUser);
+      } else if (filter === "customers") {
+        for (let userId of uniqueUsers) {
+          const userDetails = getCustomerDetails(userId);
+          if (userDetails) {
+            filteredUser.push(userDetails);
+          }
+        }
+      } else if (filter === "visitors") {
+        const visitors = fetchedUsers.filter(
+          (user) => !uniqueUsers.has(user.id)
+        );
+        filteredUser = visitors;
+      }
+      setUsers(filteredUser);
     }
-  }, [filter]);
+  }, [filter, dispatch, fetchedUsers]);
 
   useEffect(() => {
     dispatch(fetchAllUsersAsync());
-  }, [dispatch]);
+  }, [dispatch, filter]);
+
   return (
     <section className="container px-4 mx-auto">
       <div className="sm:flex sm:items-center sm:justify-between">
@@ -66,13 +78,13 @@ export default function Users() {
             Customers
           </h2>
           <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-            {showCustomers("customers")}
+            {uniqueUsers.size}
           </span>
           <h2 className="text-lg font-medium text-gray-800 dark:text-white">
             Total Visitors
           </h2>
           <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-            {showCustomers("user")}
+            {fetchedUsers.length}
           </span>
         </div>
       </div>
@@ -97,7 +109,7 @@ export default function Users() {
           <button
             onClick={() => setFilter("visitors")}
             className={` ${
-              filter === "customers" && "bg-gray-100"
+              filter === "visitors" && "bg-gray-100"
             } px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100`}
           >
             Visitors
@@ -194,7 +206,7 @@ export default function Users() {
                             }`}
                           >
                             <select
-                              onChange={(e) => handleUserRoleChange(e, index)}
+                              onChange={(e) => handleUserRoleChange(e, user.id)}
                               className="bg-transparent outline-none text-black"
                               defaultValue={user.role}
                             >
@@ -257,7 +269,7 @@ export default function Users() {
 
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <div
-                            onClick={() => handleUserDelete(user.email)}
+                            onClick={() => handleUserDelete(user.id)}
                             className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
                           >
                             <svg

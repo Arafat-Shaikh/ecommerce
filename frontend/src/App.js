@@ -1,13 +1,10 @@
 import React, { useEffect } from "react";
-import Product from "./app/Components/Products";
-import Navbar from "./app/navbar/Navbar";
 import ProductListPage from "./pages/ProductListPage";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import ProductInfo from "./app/Components/ProductInfo";
 import ProductInfoPage from "./pages/ProductInfoPage";
 import CartPage from "./pages/CartPage";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCartByUserAsync, selectCart } from "./app/Slices/CartSlice";
+import { fetchCartByUserAsync } from "./app/Slices/CartSlice";
 import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/LoginPage";
 import Signup from "./pages/SignupPage";
@@ -17,10 +14,6 @@ import {
 } from "./app/Slices/authSlice";
 import ProfilePage from "./pages/ProfilePage";
 import UserOrdersPage from "./pages/UserOrdersPage";
-import {
-  fetchCurrentUserAsync,
-  fetchUserDetailsAsync,
-} from "./app/Slices/userSlice";
 import OrderPlaced from "./pages/OrderPlaced";
 import AdminProductPage from "./pages/AdminProductPage";
 import LogoutPage from "./pages/LogoutPage";

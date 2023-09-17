@@ -68,8 +68,8 @@ export const fetchAllUsersAsync = createAsyncThunk(
 
 export const adminDeleteUserAsync = createAsyncThunk(
   "users/adminDeleteUserAsync",
-  async (user) => {
-    const response = await adminDeleteUser(user);
+  async (userId) => {
+    const response = await adminDeleteUser(userId);
     return response.data;
   }
 );
@@ -129,9 +129,8 @@ const userSlice = createSlice({
       })
       .addCase(adminDeleteUserAsync.fulfilled, (state, action) => {
         state.status = "idle";
-
-        let email = action.payload.email;
-        const index = state.allUsers.findIndex((user) => user.email === email);
+        let id = action.payload.id;
+        const index = state.allUsers.findIndex((user) => user.id === id);
         state.allUsers.splice(index, 1);
       });
   },

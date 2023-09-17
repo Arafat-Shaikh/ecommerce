@@ -101,12 +101,11 @@ export function fetchAllUsers() {
   });
 }
 
-export function adminDeleteUser(user) {
+export function adminDeleteUser(userId) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch("/users/admin", {
+      const response = await fetch("/users/admin/" + userId, {
         method: "DELETE",
-        body: JSON.stringify(user),
         headers: { "content-type": "application/json" },
       });
       if (!response.ok) {

@@ -66,15 +66,17 @@ exports.updateAdminUser = async (req, res) => {
 
 exports.adminDeleteUser = async (req, res) => {
   try {
-    const user = await User.findOneAndDelete({ email: req.body.email });
-    const { email, role, addresses } = user;
+    const user = await User.findByIdAndDelete(req.params.id);
+    console.log(user);
+    const { email, role, addresses, id } = user;
     let modifiedUser = {
+      id: id,
       email: email,
       role: role,
       addresses: addresses,
     };
 
-    res.status(201).json(modifiedUser);
+    res.status(201).json("modifiedUser");
   } catch (err) {
     console.log(err);
     res.status(401).json(err);

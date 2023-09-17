@@ -17,29 +17,6 @@ import {
 } from "../app/Slices/userSlice";
 import { createOrderApiAsync } from "../app/Slices/orderSlice";
 
-// const userDetails = {
-//   id: "2729523",
-//   addresses: [
-//     {
-//       name: "fahad",
-//       phone: 32726,
-//       street: "seven wonders",
-//       city: "mumbai",
-//       state: "maharashtra",
-//       pinCode: 2332,
-//     },
-//     {
-//       name: "test",
-//       phone: 8462,
-//       street: "blue park",
-//       city: "manhaten",
-//       state: "Usa",
-//       pinCode: 4829,
-//     },
-//   ],
-
-// };
-
 export default function CheckoutPage() {
   const {
     register,
