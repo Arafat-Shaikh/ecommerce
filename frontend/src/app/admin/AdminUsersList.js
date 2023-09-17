@@ -1,32 +1,59 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
-  deleteUserAsync,
+  adminUpdateUserAsync,
+  adminDeleteUserAsync,
   fetchAllUsersAsync,
   selectAllUser,
-  updateUserAsync,
 } from "../Slices/userSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { selectAllOrders } from "../Slices/orderSlice";
 
 export default function Users() {
   const dispatch = useDispatch();
-  const users = useSelector(selectAllUser);
-
-  console.log(users);
+  const fetchedUsers = useSelector(selectAllUser);
+  const orders = useSelector(selectAllOrders);
+  const [users, setUsers] = useState();
+  const [filter, setFilter] = useState("all");
 
   function handleUserRoleChange(e, index) {
     const copiedUsers = [...users];
     let singleUser = { ...copiedUsers[index] };
     singleUser.role = e.target.value;
-    dispatch(
-      updateUserAsync({ email: singleUser.email, role: singleUser.role })
-    );
+    dispatch(adminUpdateUserAsync(singleUser));
   }
 
   function handleUserDelete(userEmail) {
-    const copiedUsers = [...users];
-    const deleteUser = copiedUsers.find((user) => user.email === userEmail);
-    dispatch(deleteUserAsync(deleteUser));
+    const deleteUser = users.find((user) => user.email === userEmail);
+    dispatch(adminDeleteUserAsync(deleteUser));
   }
+
+  function handleUserOrder(userId) {
+    const order = orders.filter((order) => order.user === userId);
+    const orderCount = order ? order.length : "";
+    return orderCount;
+  }
+
+  function showCustomers(value) {
+    if (value === "customers") {
+      const uniqueUsers = new Set(orders.map((order) => order.user));
+      return uniqueUsers.size;
+    } else {
+      const userCount = fetchedUsers.length;
+      return userCount;
+    }
+  }
+
+  useEffect(() => {
+    if (filter === "all") {
+      setUsers(fetchedUsers);
+    } else if (filter === "customers") {
+      // get all the users id's from the orders.
+      // then get all the userDetails who's id's you got.
+      // let customerTypeUser = [];
+      // const uniqueUsers = new Set(orders.map((order) => order.user));
+      // console.log(uniqueUsers);
+    }
+  }, [filter]);
 
   useEffect(() => {
     dispatch(fetchAllUsersAsync());
@@ -39,20 +66,41 @@ export default function Users() {
             Customers
           </h2>
           <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-            240 vendors
+            {showCustomers("customers")}
+          </span>
+          <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+            Total Visitors
+          </h2>
+          <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
+            {showCustomers("user")}
           </span>
         </div>
       </div>
       <div className="mt-6 md:flex md:items-center md:justify-between">
         <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
-          <button className="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300">
+          <button
+            onClick={(e) => setFilter("all")}
+            className={`px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 ${
+              filter === "all" && "bg-gray-100"
+            } sm:text-sm dark:bg-gray-800 dark:text-gray-300`}
+          >
             View all
           </button>
-          <button className="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-            Monitored
+          <button
+            onClick={() => setFilter("customers")}
+            className={`${
+              filter === "customers" && "bg-gray-100"
+            } px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100`}
+          >
+            Customers
           </button>
-          <button className="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-            Unmonitored
+          <button
+            onClick={() => setFilter("visitors")}
+            className={` ${
+              filter === "customers" && "bg-gray-100"
+            } px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100`}
+          >
+            Visitors
           </button>
         </div>
       </div>
@@ -177,11 +225,14 @@ export default function Users() {
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <div className="flex items-center justify-center border-solid border-2 rounded-lg">
-                            <div className=" w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+                            <div
+                              onClick={() => showCustomers()}
+                              className=" w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
+                            >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
-                                viewBox="0 0 24 24"
+                                viewBox="0 0 22 22"
                                 stroke="currentColor"
                               >
                                 <path
@@ -198,7 +249,9 @@ export default function Users() {
                                 />
                               </svg>
                             </div>
-                            <span>1</span>
+                            <span className="font-semibold ">
+                              {handleUserOrder(user.id)}
+                            </span>
                           </div>
                         </td>
 

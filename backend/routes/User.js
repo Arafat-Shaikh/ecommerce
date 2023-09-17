@@ -11,7 +11,6 @@ const router = express.Router();
 
 router
   .patch("/", updateUser)
-  .delete("/", deleteUser)
   .get("/info", fetchUserById)
   .get("/", fetchAllUsersInfo)
   .patch("/admin", updateAdminUser)

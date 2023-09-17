@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
-  deleteUser,
+  adminUpdateUser,
+  adminDeleteUser,
   fetchAllUsers,
   fetchCurrentUser,
   fetchUserDetails,
@@ -31,6 +32,15 @@ export const fetchUserOrdersAsync = createAsyncThunk(
   }
 );
 
+export const adminUpdateUserAsync = createAsyncThunk(
+  "user/adminUpdateUserAsync",
+  async (singleUser) => {
+    const response = await adminUpdateUser(singleUser);
+    console.log(response.data);
+    return response.data;
+  }
+);
+
 export const updateUserAsync = createAsyncThunk(
   "user/updateUserAsync",
   async (user) => {
@@ -56,10 +66,10 @@ export const fetchAllUsersAsync = createAsyncThunk(
   }
 );
 
-export const deleteUserAsync = createAsyncThunk(
-  "users/deleteUserAsync",
+export const adminDeleteUserAsync = createAsyncThunk(
+  "users/adminDeleteUserAsync",
   async (user) => {
-    const response = await deleteUser(user);
+    const response = await adminDeleteUser(user);
     return response.data;
   }
 );
@@ -82,17 +92,16 @@ const userSlice = createSlice({
       })
       .addCase(updateUserAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        if (action.payload.id) {
-          state.userDetails = action.payload;
-        } else {
-          let role = action.payload.role;
-          let email = action.payload.email;
-          const updatedUser = state.allUsers.find((u) => u.email === email);
-          updatedUser.email = email;
-          updatedUser.role = role;
-          const index = state.allUsers.findIndex((u) => u.email === email);
-          state.allUsers.splice(index, 1, updatedUser);
-        }
+        state.userDetails = action.payload;
+      })
+      .addCase(adminUpdateUserAsync.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(adminUpdateUserAsync.fulfilled, (state, action) => {
+        const index = state.allUsers.findIndex(
+          (u) => u.id === action.payload.id
+        );
+        state.allUsers.splice(index, 1, action.payload);
       })
       .addCase(fetchUserOrdersAsync.pending, (state, action) => {
         state.status = "loading";
@@ -115,20 +124,15 @@ const userSlice = createSlice({
         state.status = "idle";
         state.allUsers = action.payload;
       })
-      .addCase(deleteUserAsync.pending, (state, action) => {
+      .addCase(adminDeleteUserAsync.pending, (state, action) => {
         state.status = "loading";
       })
-      .addCase(deleteUserAsync.fulfilled, (state, action) => {
+      .addCase(adminDeleteUserAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        if (action.payload.id) {
-          state.userDetails = "";
-        } else {
-          let email = action.payload.email;
-          const index = state.allUsers.findIndex(
-            (user) => user.email === email
-          );
-          state.allUsers.splice(index, 1);
-        }
+
+        let email = action.payload.email;
+        const index = state.allUsers.findIndex((user) => user.email === email);
+        state.allUsers.splice(index, 1);
       });
   },
 });

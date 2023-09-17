@@ -11,16 +11,6 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.deleteUser = async (req, res) => {
-  try {
-    const { id } = req.user;
-    await User.findByIdAndDelete(id);
-    res.status(201).json("User deleted");
-  } catch (err) {
-    res.status(401).json(err);
-  }
-};
-
 exports.fetchUserById = async (req, res) => {
   try {
     const { id } = req.user;
@@ -36,8 +26,9 @@ exports.fetchAllUsersInfo = async (req, res) => {
     const users = await User.find({});
     let modifiedUser = [];
     for (let user of users) {
-      const { email, role, addresses } = user;
+      const { email, role, addresses, id } = user;
       modifiedUser.push({
+        id: id,
         email: email,
         role: role,
         addresses: addresses,
@@ -53,12 +44,20 @@ exports.fetchAllUsersInfo = async (req, res) => {
 
 exports.updateAdminUser = async (req, res) => {
   try {
-    const { email, ...rest } = req.body;
-    const user = await User.findOneAndUpdate({ email: req.body.email }, rest, {
-      new: true,
-    });
+    const { id, role, email, addresses } = req.body;
+    const user = await User.findByIdAndUpdate(
+      id,
+      { role: role },
+      { new: true }
+    );
+    const modifiedUser = {
+      id: id,
+      email: email,
+      role: role,
+      addresses: addresses,
+    };
     console.log(user);
-    res.status(201).json({ email: user.email, role: user.role });
+    res.status(201).json(modifiedUser);
   } catch (err) {
     console.log(err);
     res.status(401).json(err);

@@ -66,5 +66,14 @@ exports.signOutUser = (req, res, next) => {
 
 //this route is used for checking the session.
 exports.checkUser = async (req, res) => {
-  res.json(req.user);
+  try {
+    if (req.user) {
+      console.log(req.user.token);
+      res.status(201).json(req.user);
+    } else {
+      res.status(401).json("UnAuthorized");
+    }
+  } catch (err) {
+    res.status(401).json(err);
+  }
 };

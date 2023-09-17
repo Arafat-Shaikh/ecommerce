@@ -15,11 +15,31 @@ export function fetchCurrentUser() {
 }
 
 export function updateUser(user) {
-  let url = user.id ? "/users" : "/users/admin";
   return new Promise(async (resolve, reject) => {
     console.log(user);
     try {
-      const response = await fetch(url, {
+      const response = await fetch("/users", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(user),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      resolve({ data });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+export function adminUpdateUser(user) {
+  return new Promise(async (resolve, reject) => {
+    console.log(user);
+    try {
+      const response = await fetch("/users/admin", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(user),
@@ -81,12 +101,10 @@ export function fetchAllUsers() {
   });
 }
 
-export function deleteUser(user) {
-  let url = user.id ? "/users" : "/users/admin";
-
+export function adminDeleteUser(user) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(url, {
+      const response = await fetch("/users/admin", {
         method: "DELETE",
         body: JSON.stringify(user),
         headers: { "content-type": "application/json" },

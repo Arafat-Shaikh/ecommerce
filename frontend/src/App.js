@@ -11,7 +11,10 @@ import { fetchCartByUserAsync, selectCart } from "./app/Slices/CartSlice";
 import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/LoginPage";
 import Signup from "./pages/SignupPage";
-import { selectUserToken } from "./app/Slices/authSlice";
+import {
+  selectUserToken,
+  verifyUserSessionAsync,
+} from "./app/Slices/authSlice";
 import ProfilePage from "./pages/ProfilePage";
 import UserOrdersPage from "./pages/UserOrdersPage";
 import {
@@ -21,6 +24,7 @@ import {
 import OrderPlaced from "./pages/OrderPlaced";
 import AdminProductPage from "./pages/AdminProductPage";
 import LogoutPage from "./pages/LogoutPage";
+import { fetchAllOrdersAdminApiAsync } from "./app/Slices/orderSlice";
 
 const router = createBrowserRouter([
   {
@@ -74,10 +78,19 @@ function App() {
   const userToken = useSelector(selectUserToken);
 
   useEffect(() => {
-    dispatch(fetchCartByUserAsync());
+    dispatch(verifyUserSessionAsync());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (userToken) {
+      dispatch(fetchCartByUserAsync());
+    }
 
     console.log("hello");
-    console.log(userToken);
+  }, [userToken, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchAllOrdersAdminApiAsync());
   }, [dispatch, userToken]);
 
   return (

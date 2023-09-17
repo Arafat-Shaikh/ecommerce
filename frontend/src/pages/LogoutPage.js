@@ -1,13 +1,17 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { logoutUserAsync } from "../app/Slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUserAsync, selectUserToken } from "../app/Slices/authSlice";
 import { Navigate } from "react-router-dom";
 
-export default function () {
+export default function LogoutPage() {
   const dispatch = useDispatch();
+  const userToken = useSelector(selectUserToken);
   useEffect(() => {
-    dispatch(logoutUserAsync());
-    <Navigate to={"/login"} replace={true}></Navigate>;
-  }, [dispatch]);
-  return;
+    if (userToken) {
+      dispatch(logoutUserAsync());
+    }
+  }, [dispatch, userToken]);
+  return (
+    <>{!userToken && <Navigate to={"/login"} replace={true}></Navigate>}</>
+  );
 }
