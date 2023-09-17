@@ -7,7 +7,6 @@ import {
 } from "../Slices/userSlice";
 import { useEffect, useState } from "react";
 import { selectAllOrders } from "../Slices/orderSlice";
-import { emptyCartAsync } from "../Slices/CartSlice";
 
 export default function Users() {
   const dispatch = useDispatch();
@@ -37,10 +36,15 @@ export default function Users() {
     return orderCount;
   }
 
-  function showCustomers(value) {}
+  function showCustomerOrderDetails(userId) {}
 
   function getCustomerDetails(userId) {
     return fetchedUsers.find((u) => u.id === userId);
+  }
+
+  function totalCustomers() {
+    const visitors = fetchedUsers.filter((user) => !uniqueUsers.has(user.id));
+    return visitors;
   }
 
   useEffect(() => {
@@ -57,10 +61,7 @@ export default function Users() {
           }
         }
       } else if (filter === "visitors") {
-        const visitors = fetchedUsers.filter(
-          (user) => !uniqueUsers.has(user.id)
-        );
-        filteredUser = visitors;
+        filteredUser = totalCustomers();
       }
       setUsers(filteredUser);
     }
@@ -78,7 +79,7 @@ export default function Users() {
             Customers
           </h2>
           <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-            {uniqueUsers.size}
+            {fetchedUsers && totalCustomers().length}
           </span>
           <h2 className="text-lg font-medium text-gray-800 dark:text-white">
             Total Visitors
@@ -91,7 +92,7 @@ export default function Users() {
       <div className="mt-6 md:flex md:items-center md:justify-between">
         <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
           <button
-            onClick={(e) => setFilter("all")}
+            onClick={() => setFilter("all")}
             className={`px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 ${
               filter === "all" && "bg-gray-100"
             } sm:text-sm dark:bg-gray-800 dark:text-gray-300`}
@@ -238,7 +239,7 @@ export default function Users() {
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
                           <div className="flex items-center justify-center border-solid border-2 rounded-lg">
                             <div
-                              onClick={() => showCustomers()}
+                              onClick={() => showCustomerOrderDetails(user.id)}
                               className=" w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
                             >
                               <svg

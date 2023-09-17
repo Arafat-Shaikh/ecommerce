@@ -1,7 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchFilteredProductsAsync,
-  fetchProductFiltersAsync,
   selectProducts,
   selectProductsForFilter,
   selectTotalProducts,
@@ -11,26 +9,11 @@ import { Fragment } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-import {
-  ChevronDownIcon,
-  FunnelIcon,
-  Squares2X2Icon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon, FunnelIcon } from "@heroicons/react/20/solid";
 import { ITEMS_PER_PAGE } from "../constants/Constants";
-import { Link } from "react-router-dom";
-import { fetchCartByUserAsync, selectCart } from "../Slices/CartSlice";
-import {
-  fetchAllUsersAsync,
-  selectAllUser,
-  selectUserDetails,
-  updateUserAsync,
-} from "../Slices/userSlice";
-import { selectUserToken } from "../Slices/authSlice";
-import { useForm } from "react-hook-form";
-import { createPortal } from "react-dom";
+
 import {
   deleteOrderAsync,
-  fetchAllOrdersAdminApiAsync,
   selectAllOrders,
   updateOrderAdminAsync,
 } from "../Slices/orderSlice";

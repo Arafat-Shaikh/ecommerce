@@ -1,11 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteItemApiAsync,
-  fetchCartByUserAsync,
   selectCart,
   updateCartItemAsync,
 } from "../Slices/CartSlice";
-import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 
 export default function Cart() {

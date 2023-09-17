@@ -7,7 +7,6 @@ import {
   selectCart,
   updateCartItemAsync,
 } from "../app/Slices/CartSlice";
-// import { handleDeleteCartItem, handleQuantity } from "../app/Components/Cart";
 import Cart from "../app/Components/Cart";
 import { useEffect, useState } from "react";
 import {

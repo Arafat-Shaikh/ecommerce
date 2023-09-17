@@ -11,16 +11,9 @@ import { Fragment } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-import {
-  ChevronDownIcon,
-  FunnelIcon,
-  Squares2X2Icon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon, FunnelIcon } from "@heroicons/react/20/solid";
 import { ITEMS_PER_PAGE } from "../constants/Constants";
 import { Link } from "react-router-dom";
-import { fetchCartByUserAsync, selectCart } from "../Slices/CartSlice";
-import { selectUserDetails } from "../Slices/userSlice";
-import { selectUserToken } from "../Slices/authSlice";
 
 const sortOptions = [
   { name: "Top Rating", value: "rating", href: "#", current: false },
@@ -70,8 +63,6 @@ export default function Product() {
     }
     console.log(filters);
   }
-
-  //if searchValue has words then show searched Products if searchValue has no words then show filterfetched products.
 
   function handleSearchChange(e) {
     if (e.target.value) {

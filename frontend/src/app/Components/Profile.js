@@ -8,29 +8,6 @@ import {
   updateUserAsync,
 } from "../Slices/userSlice";
 
-// const userDetails = {
-//   id: "2729523",
-//   addresses: [
-//     {
-//       name: "fahad",
-//       phone: 32726,
-//       street: "seven wonders",
-//       city: "mumbai",
-//       state: "maharashtra",
-//       email: "farhad@gmail.com",
-//       pinCode: 2332,
-//     },
-//     {
-//       name: "test",
-//       phone: 8462,
-//       street: "blue park",
-//       city: "manhaten",
-//       state: "Usa",
-//       pinCode: 4829,
-//     },
-//   ],
-// };
-
 export default function Profile() {
   const {
     register,
@@ -338,5 +315,3 @@ export default function Profile() {
     </>
   );
 }
-
-
