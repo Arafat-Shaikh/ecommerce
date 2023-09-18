@@ -8,7 +8,6 @@ import {
 } from "../Api/orderApi";
 
 const initialState = {
-  allOrders: [],
   status: "idle",
   userOrders: [],
   receivedOrderId: null,
@@ -22,34 +21,10 @@ export const createOrderApiAsync = createAsyncThunk(
   }
 );
 
-export const fetchAllOrdersAdminApiAsync = createAsyncThunk(
-  "order/fetchAllOrdersApiAsync",
-  async (order) => {
-    const response = await fetchAllOrdersAdmin(order);
-    return response.data;
-  }
-);
-
 export const fetchUserOrdersAsync = createAsyncThunk(
   "order/fetchUserOrdersAsync",
   async () => {
     const response = await fetchOrderByUser();
-    return response.data;
-  }
-);
-
-export const updateOrderAdminAsync = createAsyncThunk(
-  "order/updateOrderAdminAsync",
-  async (updateOrder) => {
-    const response = await updateOrderAdmin(updateOrder);
-    return response.data;
-  }
-);
-
-export const deleteOrderAsync = createAsyncThunk(
-  "order/deleteOrderAsync",
-  async (orderId) => {
-    const response = await deleteOrderApi(orderId);
     return response.data;
   }
 );
@@ -72,33 +47,7 @@ const orderSlice = createSlice({
         state.receivedOrderId = action.payload.id;
         state.status = "idle";
       })
-      .addCase(fetchAllOrdersAdminApiAsync.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(fetchAllOrdersAdminApiAsync.fulfilled, (state, action) => {
-        state.allOrders = action.payload;
-        state.status = "idle";
-      })
-      .addCase(updateOrderAdminAsync.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(updateOrderAdminAsync.fulfilled, (state, action) => {
-        state.status = "idle";
-        const index = state.allOrders.findIndex(
-          (order) => order.id === action.payload.id
-        );
-        state.allOrders.splice(index, 1, action.payload);
-      })
-      .addCase(deleteOrderAsync.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(deleteOrderAsync.fulfilled, (state, action) => {
-        state.status = "idle";
-        const index = state.allOrders.findIndex(
-          (order) => order.id === action.payload.id
-        );
-        state.allOrders.splice(index, 1);
-      })
+
       .addCase(fetchUserOrdersAsync.pending, (state, action) => {
         state.status = "loading";
       })
@@ -112,6 +61,5 @@ const orderSlice = createSlice({
 export const selectOrders = (state) => state.order.orders;
 export const selectUserOrders = (state) => state.order.userOrders;
 export const selectReceivedOrder = (state) => state.order.receivedOrderId;
-export const selectAllOrders = (state) => state.order.allOrders;
 export const { resetReceivedOrderId } = orderSlice.actions;
 export default orderSlice.reducer;

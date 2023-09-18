@@ -76,7 +76,7 @@ exports.adminDeleteUser = async (req, res) => {
       addresses: addresses,
     };
 
-    res.status(201).json("modifiedUser");
+    res.status(201).json(modifiedUser);
   } catch (err) {
     console.log(err);
     res.status(401).json(err);

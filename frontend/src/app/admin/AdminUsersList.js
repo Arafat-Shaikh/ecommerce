@@ -1,12 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
+
+import { useEffect, useState } from "react";
 import {
-  adminUpdateUserAsync,
+  fetchUserOrdersByAdminAsync,
+  selectAllOrders,
+  selectUserOrderByAdmin,
+} from "./slices/adminOrderSlice";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import OrderList from "../Components/OrderList";
+import {
   adminDeleteUserAsync,
+  adminUpdateUserAsync,
   fetchAllUsersAsync,
   selectAllUser,
-} from "../Slices/userSlice";
-import { useEffect, useState } from "react";
-import { selectAllOrders } from "../Slices/orderSlice";
+} from "./slices/adminUserSlice";
 
 export default function Users() {
   const dispatch = useDispatch();
@@ -15,6 +22,8 @@ export default function Users() {
   const [filter, setFilter] = useState("all");
   const uniqueUsers = new Set(orders.map((order) => order.user));
   const [users, setUsers] = useState();
+  let userOrders = useSelector(selectUserOrderByAdmin);
+  const navigate = useNavigate();
 
   function handleUserRoleChange(e, userId) {
     const copiedUsers = [...fetchedUsers];
@@ -36,7 +45,21 @@ export default function Users() {
     return orderCount;
   }
 
-  function showCustomerOrderDetails(userId) {}
+  function showCustomerOrderDetails(userId) {
+    //user id would fetch the orders of that particular user.
+    //and then pass the orders as a parameter.
+    dispatch(fetchUserOrdersByAdminAsync(userId));
+    console.log("navigate");
+  }
+
+  useEffect(() => {
+    if (userOrders.length) {
+      navigate("/order-check", {
+        state: { userOrders: JSON.stringify(userOrders) },
+      });
+      userOrders = "";
+    }
+  }, [userOrders, dispatch]);
 
   function getCustomerDetails(userId) {
     return fetchedUsers.find((u) => u.id === userId);

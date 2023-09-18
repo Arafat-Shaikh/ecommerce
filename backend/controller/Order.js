@@ -60,11 +60,23 @@ exports.updateOrder = async (req, res) => {
 exports.deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("here in delte Order " + id);
+    console.log("here in delete Order " + id);
     const order = await Order.findByIdAndDelete(id);
     res.status(201).json(order);
   } catch (err) {
     console.log(err);
+    res.status(401).json(err);
+  }
+};
+
+exports.fetchUserOrdersByAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const orders = await Order.find({ user: id });
+    console.log(orders);
+    res.status(201).json(orders);
+  } catch (err) {
     res.status(401).json(err);
   }
 };

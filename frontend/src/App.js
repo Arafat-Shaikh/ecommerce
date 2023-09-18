@@ -17,7 +17,9 @@ import UserOrdersPage from "./pages/UserOrdersPage";
 import OrderPlaced from "./pages/OrderPlaced";
 import AdminProductPage from "./pages/AdminProductPage";
 import LogoutPage from "./pages/LogoutPage";
-import { fetchAllOrdersAdminApiAsync } from "./app/Slices/orderSlice";
+import { fetchAllOrdersAdminApiAsync } from "./app/admin/slices/adminOrderSlice";
+import OrderList from "./app/Components/OrderList";
+import OrderCheck from "./pages/OrderCheck";
 
 const router = createBrowserRouter([
   {
@@ -63,6 +65,14 @@ const router = createBrowserRouter([
   {
     path: "/logout",
     element: <LogoutPage />,
+  },
+  {
+    path: "/order-list/:id",
+    element: <OrderList />,
+  },
+  {
+    path: "/order-check",
+    element: <OrderCheck />,
   },
 ]);
 

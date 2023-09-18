@@ -12,12 +12,12 @@ import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, FunnelIcon } from "@heroicons/react/20/solid";
 import { ITEMS_PER_PAGE } from "../constants/Constants";
 
+import Users from "./AdminUsersList";
 import {
   deleteOrderAsync,
   selectAllOrders,
   updateOrderAdminAsync,
-} from "../Slices/orderSlice";
-import Users from "./AdminUsersList";
+} from "./slices/adminOrderSlice";
 
 const sortOptions = [
   { name: " Low to High", value: "asc", href: "#", current: false },
