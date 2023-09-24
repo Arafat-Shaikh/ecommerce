@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
-import { RadioGroup } from "@headlessui/react";
 import {
   Link,
   Navigate,
@@ -134,26 +133,26 @@ export default function ProductInfo() {
                   <h3 className="sr-only">Reviews</h3>
                   <div className="flex items-center">
                     <div className="flex items-center">
-                      {Array.from({ length: product.rating }).map((rating) => (
-                        <StarIcon
-                          key={rating}
-                          className={classNames(
-                            reviews.average > rating
-                              ? "text-gray-900"
-                              : "text-gray-200",
-                            "h-5 w-5 flex-shrink-0"
-                          )}
-                          aria-hidden="true"
-                        />
-                      ))}
+                      {Array.from({ length: Math.floor(product.rating) }).map(
+                        (rating) => (
+                          <StarIcon
+                            key={rating}
+                            className={classNames(
+                              reviews.average > rating
+                                ? "text-gray-900"
+                                : " text-orange-400",
+                              "h-5 w-5 flex-shrink-0"
+                            )}
+                            aria-hidden="true"
+                          />
+                        )
+                      )}
                     </div>
-                    <p className="sr-only">{reviews.average} out of 5 stars</p>
-                    <a
-                      href={reviews.href}
-                      className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      {reviews.totalCount} reviews
-                    </a>
+                    {Math.floor(product.rating) > 0 && (
+                      <div className="ml-4">
+                        <h1>{product.rating.toFixed(2)} out of 5 rating</h1>
+                      </div>
+                    )}
                   </div>
                 </div>
 

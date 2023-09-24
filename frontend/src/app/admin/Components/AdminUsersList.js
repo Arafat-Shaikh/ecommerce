@@ -14,7 +14,7 @@ export default function Users() {
   const fetchedUsers = useSelector(selectAllUser);
   const orders = useSelector(selectAllOrders);
   const [filter, setFilter] = useState("all");
-  const uniqueUsers = new Set(orders.map((order) => order.user));
+  const uniqueUsers = new Set(orders.map((order) => order.user)); // it will automatically remove duplicate userIds
   const [users, setUsers] = useState();
   const navigate = useNavigate();
 
@@ -49,15 +49,14 @@ export default function Users() {
     }
   }
 
-  // useEffect(() => {}, [userOrders, dispatch]);
-
   function getCustomerDetails(userId) {
     return fetchedUsers.find((u) => u.id === userId);
   }
 
   function totalCustomers() {
     const visitors = fetchedUsers.filter((user) => !uniqueUsers.has(user.id));
-    return visitors;
+    const customers = fetchedUsers.filter((user) => uniqueUsers.has(user.id));
+    return { visitors: visitors, customers: customers };
   }
 
   useEffect(() => {
@@ -74,7 +73,8 @@ export default function Users() {
           }
         }
       } else if (filter === "visitors") {
-        filteredUser = totalCustomers();
+        const value = totalCustomers();
+        filteredUser = value.visitors;
       }
       setUsers(filteredUser);
     }
@@ -92,7 +92,7 @@ export default function Users() {
             Customers
           </h2>
           <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-            {fetchedUsers && totalCustomers().length}
+            {fetchedUsers && totalCustomers().customers.length}
           </span>
           <h2 className="text-lg font-medium text-gray-800 dark:text-white">
             Total Visitors

@@ -45,32 +45,36 @@ export default function Cart() {
             <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
               <div className="rounded-lg md:w-2/3">
                 {/* Cart Item 1 */}
-                {cart.map((item, index) => (
+                {cart.map((item) => (
                   <div className="bg-white rounded-lg shadow-md p-6 mb-4">
                     <table className="w-full">
                       <thead>
                         <tr>
-                          <th className="text-left font-semibold">Product</th>
-                          <th className="text-left font-semibold">Price</th>
-                          <th className="text-left font-semibold">Quantity</th>
-                          <th className="text-left font-semibold">Total</th>
+                          <th className="text-left text-sm">Product</th>
+                          <th className="text-left text-sm">Price</th>
+                          <th className="text-left text-sm">Quantity</th>
+                          <th className="text-left text-sm">Total</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <td className="py-4">
-                            <div className="flex items-center">
+                          <td className="py-4 w-1/4">
+                            <div className="flex items-center mb-2 ">
                               <img
-                                className="h-16 w-16 mr-4"
+                                className="h-12 w-12 mr-4"
                                 src={item.product.thumbnail}
                                 alt="Product image"
                               />
-                              <span className="font-semibold">
-                                {item.product.title}
-                              </span>
-                            </div>
+                            </div>{" "}
+                            <span className=" text-sm ">
+                              {item.product.title}
+                            </span>
                           </td>
-                          <td className="py-4">${item.discountPrice}</td>
+                          <td className="py-4">
+                            <span className="text-center w-8">
+                              ${item.discountPrice}
+                            </span>
+                          </td>
                           <td className="py-4">
                             <div className="flex items-center">
                               <button
@@ -82,7 +86,7 @@ export default function Cart() {
                                       : item.quantity
                                   )
                                 }
-                                className="border rounded-md py-2 px-4 mr-2"
+                                className="border rounded-md py-0 px-2 mr-2"
                               >
                                 -
                               </button>
@@ -98,14 +102,14 @@ export default function Cart() {
                                       : item.quantity
                                   )
                                 }
-                                className="border rounded-md py-2 px-4 ml-2"
+                                className="border rounded-md py-0 px-2 ml-2"
                               >
                                 +
                               </button>
                             </div>
                           </td>
                           <td className="py-4">
-                            ${item.discountPrice * item.quantity}
+                            ${item.quantity * item.discountPrice}
                           </td>
                         </tr>
 

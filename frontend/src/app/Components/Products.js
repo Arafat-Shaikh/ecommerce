@@ -16,8 +16,8 @@ import { ITEMS_PER_PAGE } from "../constants/Constants";
 import { Link } from "react-router-dom";
 
 const sortOptions = [
-  { name: "Price: Low to High", value: "asc", href: "#", current: false },
-  { name: "Price: High to Low", value: "desc", href: "#", current: false },
+  { name: "Low to High", value: "asc", href: "#", current: false },
+  { name: " High to Low", value: "desc", href: "#", current: false },
 ];
 
 const filters = [
@@ -259,12 +259,12 @@ export default function Product() {
 
           <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ">
             <div className="flex-auto items-baseline justify-center  border-gray-200 pb-6">
-              <div className="mb-3 flex  sm:justify-center md:justify-center justify-center">
+              <div className="flex  sm:justify-center md:justify-center justify-center">
                 {/* <h1 className="text-4xl font-bold tracking-tight text-gray-900 hidden md:block">
                   Ecommerce
                 </h1> */}
 
-                <div className="relative mb-4 lg:w-1/2 sm:w-1/2 flex items-stretch">
+                <div className="relative lg:w-1/2 sm:w-1/2 flex items-stretch">
                   <input
                     type="search"
                     className="relative m-0 -mr-0.5 block w-full md:w-[60%] lg:w-[40%] min-w-0 flex-auto rounded-l-full border border-solid border-neutral-600 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
@@ -294,52 +294,6 @@ export default function Product() {
 
               <div className="flex justify-end">
                 <div className="flex items-center">
-                  <Menu as="div" className="relative inline-block text-left">
-                    <div>
-                      <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                        Sort
-                        <ChevronDownIcon
-                          className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                      </Menu.Button>
-                    </div>
-
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1">
-                          {sortOptions.map((option) => (
-                            <Menu.Item key={option.name}>
-                              {({ active }) => (
-                                <a
-                                  href={option.href}
-                                  onClick={() => handleSort(option.value)}
-                                  className={classNames(
-                                    option.current
-                                      ? "font-medium text-gray-900"
-                                      : "text-gray-500",
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm"
-                                  )}
-                                >
-                                  {option.name}
-                                </a>
-                              )}
-                            </Menu.Item>
-                          ))}
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
-
                   <button
                     type="button"
                     className="-m-2 ml-5 p-2 text-gray-400 hover:text-gray-500 sm:ml-7"
@@ -359,14 +313,14 @@ export default function Product() {
               </div>
             </div>
 
-            <section aria-labelledby="products-heading" className="pb-24">
+            <section aria-labelledby="products-heading" className="pb-16">
               <h2 id="products-heading" className="sr-only">
                 Products
               </h2>
 
               <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                 {/* Filters */}
-                <form className="hidden lg:block">
+                <form className="hidden lg:block mr-16">
                   <h3 className="sr-only">Categories</h3>
 
                   {filters.map((section) => (
@@ -432,6 +386,55 @@ export default function Product() {
                       )}
                     </Disclosure>
                   ))}
+
+                  <Disclosure as="div" className="border-gray-200  py-6">
+                    {({ open }) => (
+                      <>
+                        <h3 className="-my-3 flow-root">
+                          <Disclosure.Button
+                            as="a"
+                            href="#"
+                            className="flex w-full items-center justify-between rounded-md px-4 bg-gray-100 py-3 text-sm text-gray-600 hover:text-gray-700"
+                          >
+                            <span className="font-medium text-gray-800">
+                              sort
+                            </span>
+                            <span className="ml-6 flex items-center">
+                              {open ? (
+                                <ChevronDownIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              ) : (
+                                <ChevronRightIcon
+                                  className="h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                              )}
+                            </span>
+                          </Disclosure.Button>
+                        </h3>
+                        <Disclosure.Panel className="pt-6">
+                          <div className="space-y-4">
+                            {sortOptions.map((option, index) => (
+                              <a
+                                href={option.href}
+                                onClick={() => handleSort(option.value)}
+                                className={classNames(
+                                  option.current
+                                    ? "font-medium text-gray-900"
+                                    : "text-gray-500",
+                                  "block px-4 py-2 text-sm"
+                                )}
+                              >
+                                {option.name}
+                              </a>
+                            ))}
+                          </div>
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
                 </form>
 
                 {/* Product grid */}

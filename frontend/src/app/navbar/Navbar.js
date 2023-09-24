@@ -225,13 +225,15 @@ export default function Navbar({ children }) {
                   </div>
                   <div className="mt-3 space-y-1 px-2">
                     {userNavigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      >
-                        {item.name}
-                      </Disclosure.Button>
+                      <Link to={item.link}>
+                        <Disclosure.Button
+                          key={item.name}
+                          as="a"
+                          className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                        >
+                          {item.name}
+                        </Disclosure.Button>
+                      </Link>
                     ))}
                   </div>
                 </div>

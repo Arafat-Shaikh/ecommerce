@@ -9,38 +9,15 @@ import {
 import { useEffect } from "react";
 import { Fragment } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
-import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { ChevronDownIcon, FunnelIcon } from "@heroicons/react/20/solid";
+
 import { ITEMS_PER_PAGE } from "../../constants/Constants";
 
 import Users from "./AdminUsersList";
-import {
-  deleteOrderAsync,
-  selectAllOrders,
-  updateOrderAdminAsync,
-} from "../slices/adminOrderSlice";
+
 import Orders from "./AdminOrderList";
 import { useForm } from "react-hook-form";
-
-const sortOptions = [
-  { name: " Low to High", value: "asc", href: "#", current: false },
-  { name: " High to Low", value: "desc", href: "#", current: false },
-];
-
-const filters = [
-  {
-    id: "category",
-    name: "Category",
-    options: [],
-  },
-  {
-    id: "brand",
-    name: "Brand",
-    options: [],
-  },
-];
+import { FunnelIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -53,16 +30,9 @@ export default function AdminProductList() {
     users: "users",
   };
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const dispatch = useDispatch();
-  const fetchedProducts = useSelector(selectProducts);
+
   const totalProducts = useSelector(selectTotalProducts);
-  const productsForFilter = useSelector(selectProductsForFilter);
-  const [page, setPage] = useState(1);
-  const [sorting, setSorting] = useState({});
-  const [selectFilters, setSelectFilter] = useState({});
-  const [searchValue, setSearchValue] = useState(null);
-  const [searchedProducts, setSearchedProducts] = useState([]);
-  const pagesCount = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+
   const [showComponent, setShowComponent] = useState(adminComponent.products);
 
   // let products = searchedProducts.length ? searchedProducts : fetchedProducts;
@@ -373,17 +343,52 @@ export default function AdminProductList() {
 }
 
 function Products() {
-  const products = useSelector(selectProductsForFilter);
+  const fetchedProducts = useSelector(selectProductsForFilter);
   const dispatch = useDispatch();
   const [isOpenForm, setForm] = useState(false);
+  const [products, setProducts] = useState(fetchedProducts);
+  console.log(products);
 
+  function searchAdminProduct(e) {
+    console.log(e.target.value);
+    if (e.target.value) {
+      const isProducts = fetchedProducts.filter((p) => {
+        const title =
+          p.title === "string"
+            ? p.title.toLowerCase()
+            : p.title.toString().toLowerCase();
+        const brand =
+          p.brand === "string"
+            ? p.brand.toLowerCase()
+            : p.brand.toString().toLowerCase();
+        const category =
+          p.brand === "string"
+            ? p.category.toLowerCase()
+            : p.category.toString().toLowerCase();
+        const targetValue =
+          e.target === "string"
+            ? e.target.value.toLowerCase()
+            : e.target.value.toString().toLowerCase();
+        return (
+          title.includes(targetValue) ||
+          brand.includes(targetValue) ||
+          category.includes(targetValue)
+        );
+      });
+      console.log(isProducts);
+      setProducts(isProducts);
+    } else {
+      setProducts(fetchedProducts);
+    }
+  }
+  ``;
   useEffect(() => {
     dispatch(fetchProductFiltersAsync());
   }, [dispatch]);
 
   return (
     <>
-      {isOpenForm && <Example isOpenForm={isOpenForm} setForm={setForm} />}
+      {isOpenForm && <ProductForm isOpenForm={isOpenForm} setForm={setForm} />}
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="p-4">
           <label htmlFor="table-search" className="sr-only">
@@ -405,6 +410,7 @@ function Products() {
               </svg>
             </div>
             <input
+              onChange={(e) => searchAdminProduct(e)}
               type="text"
               id="table-search"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -488,7 +494,7 @@ function Products() {
   );
 }
 
-function Example({ isOpenForm, setForm }) {
+function ProductForm({ isOpenForm, setForm }) {
   const cancelButtonRef = useRef(null);
   const {
     register,
