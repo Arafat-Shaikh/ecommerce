@@ -24,11 +24,11 @@ exports.signupUser = async (req, res) => {
             const token = jwt.sign(filterUser(doc), "SECRET_KEY");
             res
               .cookie("jwt", token, {
-                expires: new Date(Date.now() + 3600000),
+                expires: new Date(Date.now() + 7200000),
                 httpOnly: true,
               })
               .status(201)
-              .json(token);
+              .json(filterUser(doc));
           }
         });
       }
@@ -49,7 +49,7 @@ exports.loginUser = async (req, res) => {
         httpOnly: true,
       })
       .status(201)
-      .json(user.token);
+      .json(user);
   } catch (err) {
     console.log(err);
   }

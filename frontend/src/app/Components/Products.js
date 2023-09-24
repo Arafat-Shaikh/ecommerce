@@ -16,7 +16,6 @@ import { ITEMS_PER_PAGE } from "../constants/Constants";
 import { Link } from "react-router-dom";
 
 const sortOptions = [
-  { name: "Top Rating", value: "rating", href: "#", current: false },
   { name: "Price: Low to High", value: "asc", href: "#", current: false },
   { name: "Price: High to Low", value: "desc", href: "#", current: false },
 ];
@@ -265,10 +264,10 @@ export default function Product() {
                   Ecommerce
                 </h1> */}
 
-                <div className="relative mb-4 w-2/3 flex items-stretch">
+                <div className="relative mb-4 lg:w-1/2 sm:w-1/2 flex items-stretch">
                   <input
                     type="search"
-                    className="relative m-0 -mr-0.5 block w-full md:w-[60%] lg:w-[40%] min-w-0 flex-auto rounded-l border border-solid border-neutral-600 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
+                    className="relative m-0 -mr-0.5 block w-full md:w-[60%] lg:w-[40%] min-w-0 flex-auto rounded-l-full border border-solid border-neutral-600 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
                     placeholder="Search"
                     aria-label="Search"
                     aria-describedby="button-addon3"
@@ -276,13 +275,19 @@ export default function Product() {
                   />
                   {/* Search button */}
                   <button
-                    className="relative z-[2] rounded-r border-2 border-neutral-500 px-3 py-2 text-xs font-medium uppercase text-primary transition duration-150 ease-in-out hover:bg-neutral-600 hover:bg-black-5 hover:text-white focus:outline-none focus:ring-0"
+                    className="relative z-[2] rounded-r-full border-2 border-neutral-500 px-3 py-2 text-xs font-medium uppercase text-primary transition duration-150 ease-in-out hover:bg-neutral-600 hover:bg-black-5 hover:text-white focus:outline-none focus:ring-0"
                     type="button"
                     id="button-addon3"
                     data-te-ripple-init=""
                     onClick={() => handleProductSearch()}
                   >
-                    Search
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="1.2em"
+                      viewBox="0 0 512 512"
+                    >
+                      <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+                    </svg>
                   </button>
                 </div>
               </div>

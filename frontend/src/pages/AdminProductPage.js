@@ -1,4 +1,4 @@
-import AdminProduct from "../app/admin/AdminProductList";
+import AdminProduct from "../app/admin/Components/AdminProductList";
 import Navbar from "../app/navbar/Navbar";
 
 export default function AdminProductPage() {

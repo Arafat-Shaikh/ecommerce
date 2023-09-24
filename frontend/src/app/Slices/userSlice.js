@@ -1,8 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
-  adminUpdateUser,
-  adminDeleteUser,
-  fetchAllUsers,
   fetchCurrentUser,
   fetchUserDetails,
   fetchUserOrders,
@@ -87,5 +84,4 @@ const userSlice = createSlice({
 
 export const selectUserDetails = (state) => state.user.userDetails;
 export const selectUserOrders = (state) => state.user.userOrders;
-export const selectAllUser = (state) => state.user.allUsers;
 export default userSlice.reducer;

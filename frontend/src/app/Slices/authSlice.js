@@ -53,12 +53,13 @@ export const logoutUserAsync = createAsyncThunk(
 
 export const verifyUserSessionAsync = createAsyncThunk(
   "auth/verifyUserSessionAsync",
-  async () => {
+  async (thunkAPI) => {
     try {
       const response = await verifyUserSession();
       return response.data;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data.errors);
     }
   }
 );
@@ -104,6 +105,10 @@ const authSlice = createSlice({
       .addCase(verifyUserSessionAsync.fulfilled, (state, action) => {
         state.status = "idle";
         state.userToken = action.payload;
+      })
+      .addCase(verifyUserSessionAsync.rejected, (state, action) => {
+        state.status = "idle";
+        state.errorMessage = action.payload;
       });
   },
 });

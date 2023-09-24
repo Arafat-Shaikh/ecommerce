@@ -122,19 +122,6 @@ export default function OrderList({ orders, handleDisplayColor }) {
                   </p>
                 </div>
               </div>
-              {/* <div className="m-4 flex">
-                <div className="flex-1">
-                  <p className="">Order Placed</p>
-                  <p className="mt-5">Processed</p>
-                  <p className="mt-5">Shipped</p>
-                  <p className="mt-5">Delivered</p>
-                </div>
-                <div className="flex-1">
-                  <div className="mt-2 h-36 w-2 bg-gray-300 rounded-t-full rounded-b-full">
-                    <div className="mt-2 h-3 w-2 bg-green-600 rounded-t-full rounded-b-full"></div>
-                  </div>
-                </div>
-              </div> */}
             </div>
           </>
         ))}

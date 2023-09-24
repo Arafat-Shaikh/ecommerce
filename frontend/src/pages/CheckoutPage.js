@@ -62,7 +62,7 @@ export default function CheckoutPage() {
         totalItems: cartItems.length,
         user: userDetails.id,
         paymentType: payment,
-        orderStatus: "pending",
+        orderStatus: "Pending",
         address: orderAddress,
       };
       console.log(orderDetails);
@@ -99,7 +99,7 @@ export default function CheckoutPage() {
               <button
                 onClick={() => setNewDetails(true)}
                 type="button"
-                className="mb-5 mt-10 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                className="mb-5 mt-10 rounded-md bg-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
               >
                 Add New Details
               </button>
@@ -319,36 +319,68 @@ export default function CheckoutPage() {
               <ul>
                 {userDetails &&
                   userDetails.addresses.map((address, index) => (
-                    <li className="mb-2 flex justify-between gap-x-6 px-5 py-5 border-solid border-2 border-gray-900 rounded-lg">
-                      <div className="flex gap-x-4">
-                        <input
-                          onChange={() => handleAddress(index)}
-                          name="address"
-                          type="radio"
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <div className="min-w-0 flex-auto">
-                          <p className="text-sm font-semibold leading-6 text-gray-900"></p>
-                          <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                            {address.street}
-                          </p>
-                          <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                            Pincode: {address.pinCode}
-                          </p>
+                    <div className="mt-5 bg-white shadow cursor-pointer rounded-xl">
+                      <div className="flex ">
+                        <div className="flex-1 py-5 pl-5 overflow-hidden  ">
+                          <ul>
+                            <li className=" italic font-semibold">
+                              {address.email}
+                            </li>
+                            <li>
+                              <div className="flex items-center">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke-width="1.5"
+                                  stroke="currentColor"
+                                  className="w-4 h-4"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
+                                  />
+                                </svg>
+
+                                <p className="ml-1 italic text-sm">
+                                  - {address.phone}
+                                </p>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                        <div className="flex-1 py-5 pl-1 overflow-hidden ">
+                          <ul>
+                            <li className="text-xs text-gray-600 uppercase">
+                              Address Details
+                            </li>
+                            <li>
+                              State: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              {address.state}
+                            </li>
+                            <li>
+                              City:
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              {address.city}
+                            </li>
+                            <li>
+                              Street: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              {address.street}
+                            </li>
+                            <li>Pincode: &nbsp;&nbsp;{address.pinCode}</li>
+                          </ul>
+                        </div>
+                        <div className="flex-none pt-2.5 pr-2.5 pl-1">
+                          <input
+                            onChange={() => handleAddress(index)}
+                            name="address"
+                            type="radio"
+                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                          />
                         </div>
                       </div>
-                      <div className="hidden sm:flex sm:flex-col sm:items-end">
-                        <p className="text-sm leading-6 text-gray-900">
-                          Phone: {address.phone}
-                        </p>
-                        <p className="text-sm leading-6 text-gray-500">
-                          {address.state}
-                        </p>
-                        <p className="text-sm leading-6 text-gray-500">
-                          {address.city}
-                        </p>
-                      </div>
-                    </li>
+                    </div>
                   ))}
               </ul>
 
@@ -501,11 +533,16 @@ export default function CheckoutPage() {
                 </p>
                 <div className="mt-6">
                   <Link to={`/order/placed}`}></Link>
-                  <div
-                    onClick={() => handleProcess()}
-                    className="flex cur00sor-pointer items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                  >
-                    Order Now
+                  <div className="w-full flex justify-center">
+                    <div
+                      onClick={() => handleProcess()}
+                      className={`cursor-pointer mt-10 flex w-3/5 items-center justify-center rounded-full border border-transparent px-6 py-2 text-base font-semibold text-black focus:outline-none focus:ring-2 focus:ring-offset-2 
+                       bg-yellow-500 hover:bg-yellow-600 
+                      focus:ring-yellow-500 
+                     `}
+                    >
+                      Order Now
+                    </div>
                   </div>
                 </div>
                 <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
@@ -514,7 +551,7 @@ export default function CheckoutPage() {
                     <Link to="/">
                       <button
                         type="button"
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                        className="font-medium text-gray-600 hover:text-gray-500"
                       >
                         Continue Shopping
                         <span aria-hidden="true"> &rarr;</span>

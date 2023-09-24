@@ -4,7 +4,7 @@ import Navbar from "../app/navbar/Navbar";
 export default function ProductInfoPage() {
   return (
     <Navbar>
-      <ProductInfo />;
+      <ProductInfo />
     </Navbar>
   );
 }

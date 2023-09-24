@@ -20,6 +20,10 @@ import LogoutPage from "./pages/LogoutPage";
 import { fetchAllOrdersAdminApiAsync } from "./app/admin/slices/adminOrderSlice";
 import OrderList from "./app/Components/OrderList";
 import OrderCheck from "./pages/OrderCheck";
+import { StatusContext } from "./app/Context/UseColor";
+import { DiscountContext } from "./app/Context/UseDiscount";
+import Auth from "./app/auth/Auth";
+import AdminAuth from "./app/auth/AdminAuth";
 
 const router = createBrowserRouter([
   {
@@ -32,11 +36,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/cart",
-    element: <CartPage />,
+    element: (
+      <Auth>
+        <CartPage />
+      </Auth>
+    ),
   },
   {
     path: "/checkout",
-    element: <CheckoutPage />,
+    element: (
+      <Auth>
+        <CheckoutPage />
+      </Auth>
+    ),
   },
   {
     path: "/login",
@@ -48,19 +60,35 @@ const router = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <ProfilePage />,
+    element: (
+      <Auth>
+        <ProfilePage />
+      </Auth>
+    ),
   },
   {
     path: "/user/orders",
-    element: <UserOrdersPage />,
+    element: (
+      <Auth>
+        <UserOrdersPage />
+      </Auth>
+    ),
   },
   {
     path: "/order/placed",
-    element: <OrderPlaced />,
+    element: (
+      <Auth>
+        <OrderPlaced />
+      </Auth>
+    ),
   },
   {
     path: "/admin/productList",
-    element: <AdminProductPage />,
+    element: (
+      <AdminAuth>
+        <AdminProductPage />
+      </AdminAuth>
+    ),
   },
   {
     path: "/logout",
@@ -87,18 +115,41 @@ function App() {
   useEffect(() => {
     if (userToken) {
       dispatch(fetchCartByUserAsync());
+      dispatch(fetchAllOrdersAdminApiAsync());
     }
 
     console.log("hello");
   }, [userToken, dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchAllOrdersAdminApiAsync());
-  }, [dispatch, userToken]);
+  function handleDisplayColor(status) {
+    switch (status) {
+      case "Pending":
+        return "text-yellow-500 bg-yellow-100/60";
+      case "Processing":
+        return "text-emerald-500 bg-emerald-100/60";
+      case "Shipped":
+        return "text-blue-500 bg-blue-100/60";
+      case "Delivered":
+        return "text-purple-500 bg-purple-100/60";
+      case "Refunded":
+        return "text-gray-500 bg-gray-100/60";
+      case "Cancelled":
+        return "text-red-500 bg-red-100/60";
+    }
+  }
+
+  function countDiscount(price, discount) {
+    const discountPrice = (price - (price * discount) / 100).toFixed(0);
+    return discountPrice;
+  }
 
   return (
     <>
-      <RouterProvider router={router} />
+      <StatusContext.Provider value={handleDisplayColor}>
+        <DiscountContext.Provider value={countDiscount}>
+          <RouterProvider router={router} />
+        </DiscountContext.Provider>
+      </StatusContext.Provider>
     </>
   );
 }

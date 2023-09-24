@@ -6,9 +6,8 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectCart } from "../Slices/CartSlice";
-import { fetchCartByUser } from "../Api/cartApi";
 import { selectUserToken } from "../Slices/authSlice";
 
 const profilePicture = {
@@ -19,8 +18,6 @@ const profilePicture = {
 };
 const navigation = [
   { name: "Dashboard", to: "/admin/productList", user: true },
-  // { name: "Admin", to: "/admin/product-list", admin: true },
-  // { name: "Orders", to: "/admin/orders", admin: true },
 ];
 const userNavigation = [
   { name: "Account", link: "/profile" },
@@ -37,11 +34,8 @@ function classNames(...classes) {
 
 export default function Navbar({ children }) {
   const cart = useSelector(selectCart);
-  const dispatch = useDispatch();
   const userToken = useSelector(selectUserToken);
-  // useEffect(() => {
-  //   if (userToken) dispatch(fetchCartByUser());
-  // }, [dispatch]);
+
   return (
     <>
       <div className="min-h-full">
@@ -51,15 +45,6 @@ export default function Navbar({ children }) {
               <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
-                    {/* <div className="flex-shrink-0">
-                      <Link to="/">
-                        <img
-                          className="h-8 w-8"
-                          src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                          alt="Your Company"
-                        />
-                      </Link>
-                    </div> */}
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
                         <a
@@ -73,40 +58,28 @@ export default function Navbar({ children }) {
                             loading="lazy"
                           />
                         </a>
-                        {navigation.map((item, index) =>
-                          item[user.role] ? (
-                            <Link
-                              key={index}
-                              to={item.to}
-                              className={classNames(
-                                item.current
-                                  ? "bg-gray-900 text-white"
-                                  : "text-gray-600 hover:bg-gray-700 hover:text-white",
-                                "rounded-md px-3 py-2 text-sm font-medium"
-                              )}
-                            >
-                              {item.name}
-                            </Link>
-                          ) : null
-                        )}
+                        {userToken.role === "admin" &&
+                          navigation.map((item, index) =>
+                            item[user.role] ? (
+                              <Link
+                                key={index}
+                                to={item.to}
+                                className={classNames(
+                                  item.current
+                                    ? "bg-gray-900 text-white"
+                                    : "text-gray-600 hover:bg-gray-700 hover:text-white",
+                                  "rounded-md px-3 py-2 text-sm font-medium"
+                                )}
+                              >
+                                {item.name}
+                              </Link>
+                            ) : null
+                          )}
                       </div>
                     </div>
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-4 flex items-center md:ml-6">
-                      {/* <Link to="/cart">
-                        <button
-                          type="button"
-                          className="relative rounded-full bg-black p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                        >
-                          <span className="absolute -inset-1.5" />
-                          <span className="sr-only">View notifications</span>
-                          <ShoppingCartIcon
-                            className="h-6 w-6"
-                            aria-hidden="true"
-                          />
-                        </button>
-                      </Link> */}
                       <Link to={"/cart"}>
                         <span className="[&>svg]:w-5">
                           <svg
@@ -229,7 +202,9 @@ export default function Navbar({ children }) {
                         {profilePicture.email}
                       </div>
                     </div>
-                    <button
+
+                    <Link
+                      to={"/cart"}
                       type="button"
                       className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
@@ -239,10 +214,14 @@ export default function Navbar({ children }) {
                         className="h-6 w-6"
                         aria-hidden="true"
                       />
-                    </button>
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-1.5 py-0 mb-6 -ml-3 z-10 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                      1
-                    </span>
+                    </Link>
+                    {!cart.length ? (
+                      <span></span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-md bg-gray-50 px-1.5 py-0 mb-6 -ml-3 z-10 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                        {cart.length}
+                      </span>
+                    )}
                   </div>
                   <div className="mt-3 space-y-1 px-2">
                     {userNavigation.map((item) => (

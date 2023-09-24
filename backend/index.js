@@ -6,6 +6,7 @@ const cartRouter = require("./routes/Cart");
 const authRouter = require("./routes/Auth");
 const orderRouter = require("./routes/Order");
 const userRouter = require("./routes/User");
+const multer = require("multer");
 const cors = require("cors");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -78,7 +79,7 @@ passport.use(
               done(null, false, { message: "Invalid User" });
             } else {
               const token = jwt.sign(filterUser(user), SECRET_KEY);
-              return done(null, { token });
+              return done(null, { id: user.id, role: user.role, token });
             }
           }
         );
@@ -126,8 +127,8 @@ passport.deserializeUser(function (user, done) {
 });
 
 app.use("/auth", authRouter.router);
+app.use("/products", productsRouter.router);
 app.use("/cart", isAuth(), cartRouter.router);
-app.use("/products", isAuth(), productsRouter.router);
 app.use("/orders", isAuth(), orderRouter.router);
 app.use("/users", isAuth(), userRouter.router);
 

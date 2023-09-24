@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
-import { useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {
   fetchProductByIdAsync,
   selectProductById,
@@ -13,6 +19,8 @@ import {
   selectCart,
 } from "../Slices/CartSlice";
 import { fetchCartByUser } from "../Api/cartApi";
+import { DiscountContext, useDiscount } from "../Context/UseDiscount";
+import { selectUserToken } from "../Slices/authSlice";
 
 const reviews = { href: "#", average: 4, totalCount: 117 };
 
@@ -20,31 +28,35 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function ProductInfo() {
   const dispatch = useDispatch();
   const params = useParams();
   const product = useSelector(selectProductById);
   const cart = useSelector(selectCart);
+  const discountPrice = useDiscount(DiscountContext);
+  const userToken = useSelector(selectUserToken);
+  const navigate = useNavigate();
 
   function handleAddToCart(productId) {
-    if (cart) {
-      const discountedPrice = (
-        product.price -
-        (product.price * product.discountPercentage) / 100
-      ).toFixed(0);
-      console.log(discountedPrice);
-      const index = cart.findIndex((item) => item.product.id === productId);
-      if (index === -1) {
-        dispatch(
-          addToCartApiAsync({
-            product: productId,
-            quantity: 1,
-            discountPrice: Number(discountedPrice),
-          })
-        );
-      } else {
-        alert("Item is already added.");
+    if (userToken) {
+      if (cart) {
+        const index = cart.findIndex((item) => item.product.id === productId);
+        if (index === -1) {
+          dispatch(
+            addToCartApiAsync({
+              product: productId,
+              quantity: 1,
+              discountPrice: Number(
+                discountPrice(product.price, product.discountPercentage)
+              ),
+            })
+          );
+        } else {
+          alert("Item is already added.");
+        }
       }
+    } else {
+      navigate("/login");
     }
   }
 
@@ -106,8 +118,15 @@ export default function Example() {
               {/* Options */}
               <div className="mt-4 lg:row-span-3 lg:mt-0">
                 <h2 className="sr-only">Product information</h2>
+
                 <p className="text-3xl tracking-tight text-gray-900">
-                  ${product.price}
+                  ${discountPrice(product.price, product.discountPercentage)}
+                  <span className="text-2xl ml-4 tracking-tight text-red-600">
+                    -{product.discountPercentage.toFixed(0)}%
+                  </span>
+                  <span className="font-semibold text-sm ml-2 line-through tracking-tight text-gray-900">
+                    ${product.price}
+                  </span>
                 </p>
 
                 {/* Reviews */}
@@ -115,7 +134,7 @@ export default function Example() {
                   <h3 className="sr-only">Reviews</h3>
                   <div className="flex items-center">
                     <div className="flex items-center">
-                      {[0, 1, 2, 3, 4].map((rating) => (
+                      {Array.from({ length: product.rating }).map((rating) => (
                         <StarIcon
                           key={rating}
                           className={classNames(
@@ -139,20 +158,40 @@ export default function Example() {
                 </div>
 
                 {/* Sizes */}
-
-                <button
-                  onClick={() => handleAddToCart(product.id)}
-                  disabled={product.stock === 0}
-                  className={`mt-10 flex w-full items-center justify-center rounded-md border border-transparent ${
-                    product.stock === 0 ? "bg-blue-300" : "bg-blue-600"
-                  } px-8 py-3 text-base font-medium text-white ${
-                    product.stock === 0 ? "" : "hover:bg-indigo-700 "
-                  }focus:outline-none focus:ring-2 ${
-                    product.stock === 0 ? "" : "focus:ring-indigo-500 "
-                  } focus:ring-offset-2`}
-                >
-                  Add to bag
-                </button>
+                <div className="w-full flex justify-center">
+                  <button
+                    onClick={() => handleAddToCart(product.id)}
+                    disabled={product.stock === 0}
+                    className={`mt-10 flex  w-3/5 items-center justify-center rounded-full border border-transparent px-6 py-2 text-base font-semibold text-black focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      product.stock === 0 ? "bg-orange-300" : "bg-yellow-500"
+                    }  ${product.stock === 0 ? "" : "hover:bg-yellow-600 "} ${
+                      product.stock === 0 ? "" : "focus:ring-yellow-500 "
+                    } `}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+                <>
+                  {cart.length ? (
+                    <div className="w-full flex justify-center">
+                      <Link
+                        to={"/cart"}
+                        className={`mt-2 flex  w-3/5 items-center justify-center rounded-full border border-transparent 
+                          bg-gray-500
+                         px-6 py-2 text-base font-medium text-white 
+                           hover:bg-gray-600 
+                        focus:outline-none focus:ring-2 
+                          focus:ring-gray-500 
+                         focus:ring-offset-2`}
+                      >
+                        {" "}
+                        Go to Cart
+                      </Link>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </>
               </div>
 
               <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pb-16 lg:pr-8 lg:pt-6">

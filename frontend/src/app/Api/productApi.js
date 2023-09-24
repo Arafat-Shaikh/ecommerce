@@ -35,10 +35,14 @@ export function fetchProductById(id) {
 export function createProductApi(product) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`/products`, {
+      const formData = new FormData();
+      for (const key in product) {
+        formData.append(key, product[key]);
+        console.log(product[key]);
+      }
+      const response = await fetch("/products", {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(product),
+        body: formData,
       });
       const data = await response.json();
       resolve({ data });
@@ -47,6 +51,22 @@ export function createProductApi(product) {
     }
   });
 }
+
+// export function createProductApi(product) {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       const response = await fetch(`/products`, {
+//         method: "POST",
+//         headers: { "content-type": "multipart/form-data" },
+//         body: JSON.stringify(product),
+//       });
+//       const data = await response.json();
+//       resolve({ data });
+//     } catch (err) {
+//       reject(err);
+//     }
+//   });
+// }
 
 export function deleteProductApi(productId) {
   return new Promise(async (resolve, reject) => {

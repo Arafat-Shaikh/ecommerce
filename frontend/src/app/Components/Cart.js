@@ -151,7 +151,7 @@ export default function Cart() {
                 </div>
 
                 <Link to={"/checkout"}>
-                  <button className="mt-6 w-full rounded-md bg-blue-500 py-1.5 font-medium text-blue-50 hover:bg-blue-600">
+                  <button className="mt-6 w-full rounded-md bg-yellow-600 py-1.5 font-medium text-black hover:bg-yellow-500">
                     Check out
                   </button>
                 </Link>
