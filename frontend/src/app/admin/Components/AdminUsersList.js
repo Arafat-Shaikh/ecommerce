@@ -15,15 +15,12 @@ export default function Users() {
   const orders = useSelector(selectAllOrders);
   const [filter, setFilter] = useState("all");
   const uniqueUsers = new Set(orders.map((order) => order.user)); // it will automatically remove duplicate userIds
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   function handleUserRoleChange(e, userId) {
-    const copiedUsers = [...fetchedUsers];
-    let user = copiedUsers.find((user) => user.id === userId);
-    let singleUser = { ...user };
-    singleUser.role = e.target.value;
-    dispatch(adminUpdateUserAsync(singleUser));
+    let user = fetchedUsers.find((user) => user.id === userId);
+    dispatch(adminUpdateUserAsync({ ...user, role: e.target.value }));
   }
 
   function handleUserDelete(userId) {
@@ -49,36 +46,27 @@ export default function Users() {
     }
   }
 
-  function getCustomerDetails(userId) {
-    return fetchedUsers.find((u) => u.id === userId);
-  }
-
   function totalCustomers() {
     const visitors = fetchedUsers.filter((user) => !uniqueUsers.has(user.id));
     const customers = fetchedUsers.filter((user) => uniqueUsers.has(user.id));
+    console.log(visitors);
+    console.log(customers);
     return { visitors: visitors, customers: customers };
   }
 
   useEffect(() => {
-    if (fetchedUsers) {
-      let filteredUser = [];
-      if (filter === "all") {
-        filteredUser = fetchedUsers;
-        setUsers(filteredUser);
-      } else if (filter === "customers") {
-        for (let userId of uniqueUsers) {
-          const userDetails = getCustomerDetails(userId);
-          if (userDetails) {
-            filteredUser.push(userDetails);
-          }
-        }
-      } else if (filter === "visitors") {
-        const value = totalCustomers();
-        filteredUser = value.visitors;
-      }
-      setUsers(filteredUser);
+    if (filter === "all") {
+      setUsers(fetchedUsers);
+    } else if (filter === "customers") {
+      const customers = fetchedUsers.filter((user) => uniqueUsers.has(user.id));
+      setUsers(customers);
+    } else if (filter === "visitors") {
+      const visitors = fetchedUsers.filter((user) => !uniqueUsers.has(user.id));
+      setUsers(visitors);
     }
-  }, [filter, dispatch, fetchedUsers]);
+  }, [dispatch, filter, fetchedUsers]);
+
+  console.log(users);
 
   useEffect(() => {
     dispatch(fetchAllUsersAsync());
@@ -227,6 +215,7 @@ export default function Users() {
                               <option value={"user"}>user</option>
                               <option value={"admin"}>admin</option>
                             </select>
+                            <h1>{user.role}</h1>
                           </div>
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
