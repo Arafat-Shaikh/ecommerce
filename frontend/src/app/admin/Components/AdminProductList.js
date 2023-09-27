@@ -381,7 +381,6 @@ function Products() {
       setProducts(fetchedProducts);
     }
   }
-  ``;
   useEffect(() => {
     dispatch(fetchProductFiltersAsync());
   }, [dispatch]);
