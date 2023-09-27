@@ -381,7 +381,10 @@ function Products() {
       setProducts(fetchedProducts);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> df8fcea
   useEffect(() => {
     dispatch(fetchProductFiltersAsync());
   }, [dispatch]);

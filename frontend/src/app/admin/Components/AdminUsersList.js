@@ -14,13 +14,15 @@ export default function Users() {
   const fetchedUsers = useSelector(selectAllUser);
   const orders = useSelector(selectAllOrders);
   const [filter, setFilter] = useState("all");
-  const uniqueUsers = new Set(orders.map((order) => order.user)); // it will automatically remove duplicate userIds
-  const [users, setUsers] = useState([]);
+  const uniqueUsers = new Set(orders.map((order) => order.user));
+  const [users, setUsers] = useState();
   const navigate = useNavigate();
 
   function handleUserRoleChange(e, userId) {
     let user = fetchedUsers.find((user) => user.id === userId);
-    dispatch(adminUpdateUserAsync({ ...user, role: e.target.value }));
+    let singleUser = { ...user };
+    singleUser.role = e.target.value;
+    dispatch(adminUpdateUserAsync(singleUser));
   }
 
   function handleUserDelete(userId) {
@@ -47,9 +49,17 @@ export default function Users() {
   }
 
   function totalCustomers() {
-    const visitors = fetchedUsers.filter((user) => !uniqueUsers.has(user.id));
-    const customers = fetchedUsers.filter((user) => uniqueUsers.has(user.id));
-    console.log(visitors);
+    const uniqueUsers = new Set(orders.map((order) => order.user));
+    let userIds = [];
+    if (uniqueUsers) {
+      for (let userId of uniqueUsers) {
+        console.log(userId);
+        userIds.push(userId);
+      }
+    }
+    console.log(userIds);
+    const visitors = fetchedUsers.filter((user) => !userIds.includes(user.id));
+    const customers = fetchedUsers.filter((user) => userIds.includes(user.id));
     console.log(customers);
     return { visitors: visitors, customers: customers };
   }
@@ -108,14 +118,14 @@ export default function Users() {
           >
             Customers
           </button>
-          <button
+          {/* <button
             onClick={() => setFilter("visitors")}
             className={` ${
               filter === "visitors" && "bg-gray-100"
             } px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100`}
           >
             Visitors
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="flex flex-col mt-6">
