@@ -65,6 +65,7 @@ export default function Users() {
   }
 
   useEffect(() => {
+<<<<<<< HEAD
     if (filter === "all") {
       setUsers(fetchedUsers);
     } else if (filter === "customers") {
@@ -73,6 +74,24 @@ export default function Users() {
     } else if (filter === "visitors") {
       const visitors = fetchedUsers.filter((user) => !uniqueUsers.has(user.id));
       setUsers(visitors);
+=======
+    if (fetchedUsers) {
+      let filteredUser = [];
+      if (filter === "all") {
+        filteredUser = fetchedUsers;
+        setUsers(filteredUser);
+      } else if (filter === "customers") {
+        for (let userId of uniqueUsers) {
+          totalCustomers();
+          const userDetails = getCustomerDetails(userId);
+          if (userDetails) {
+            filteredUser.push(userDetails);
+          }
+        }
+
+        setUsers(filteredUser);
+      }
+>>>>>>> change1
     }
   }, [dispatch, filter, fetchedUsers]);
 
