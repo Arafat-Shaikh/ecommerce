@@ -82,6 +82,7 @@ export default function Users() {
             filteredUser.push(userDetails);
           }
         }
+
         setUsers(filteredUser);
       }
     }
