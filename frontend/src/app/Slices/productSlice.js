@@ -45,30 +45,6 @@ export const fetchProductByIdAsync = createAsyncThunk(
   }
 );
 
-export const createProductApiAsync = createAsyncThunk(
-  "product/createProductApiAsync",
-  async (product) => {
-    const response = await createProductApi(product);
-    return response.data;
-  }
-);
-
-export const deleteProductApiAsync = createAsyncThunk(
-  "product/deleteProductApiAsync",
-  async (product) => {
-    const response = await deleteProductApi(product);
-    return response.data;
-  }
-);
-
-export const updateProductApiAsync = createAsyncThunk(
-  "product/updateProductApiAsync",
-  async () => {
-    const response = await updateProductApi();
-    return response.data;
-  }
-);
-
 const productSlice = createSlice({
   name: "product",
   initialState,
@@ -95,33 +71,6 @@ const productSlice = createSlice({
       .addCase(fetchProductByIdAsync.fulfilled, (state, action) => {
         state.productById = action.payload;
         state.status = "idle";
-      })
-      .addCase(createProductApiAsync.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(createProductApiAsync.fulfilled, (state, action) => {
-        state.status = "idle";
-        state.products.push(action.payload);
-      })
-      .addCase(deleteProductApiAsync.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(deleteProductApiAsync.fulfilled, (state, action) => {
-        state.status = "idle";
-        const index = state.products.findIndex(
-          (p) => p.id === action.payload.id
-        );
-        state.products.splice(index, 1);
-      })
-      .addCase(updateProductApiAsync.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(updateProductApiAsync.fulfilled, (state, action) => {
-        state.status = "idle";
-        const index = state.products.findIndex(
-          (p) => p.id === action.payload.id
-        );
-        state.products.splice(index, 1, action.payload);
       });
   },
 });

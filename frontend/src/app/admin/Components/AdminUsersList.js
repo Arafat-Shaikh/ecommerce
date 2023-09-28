@@ -7,28 +7,33 @@ import {
   fetchAllUsersAsync,
   selectAllUser,
 } from "../slices/adminUserSlice";
-import { selectAllOrders } from "../slices/adminOrderSlice";
+import {
+  deleteOrderAsync,
+  fetchAllOrdersAdminApiAsync,
+  fetchUserOrdersByAdminAsync,
+  selectAllOrders,
+} from "../slices/adminOrderSlice";
 
 export default function Users() {
   const dispatch = useDispatch();
   const fetchedUsers = useSelector(selectAllUser);
   const orders = useSelector(selectAllOrders);
-  const [filter, setFilter] = useState("all");
-  const uniqueUsers = new Set(orders.map((order) => order.user));
-  const [users, setUsers] = useState();
+  const [filter, setFilter] = useState();
+  const [customer, setCustomer] = useState();
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   function handleUserRoleChange(e, userId) {
     let user = fetchedUsers.find((user) => user.id === userId);
     let singleUser = { ...user };
     singleUser.role = e.target.value;
+    console.log(singleUser);
     dispatch(adminUpdateUserAsync(singleUser));
   }
 
   function handleUserDelete(userId) {
-    if (fetchedUsers) {
-      dispatch(adminDeleteUserAsync(userId));
-    }
+    console.log(userId);
+    dispatch(adminDeleteUserAsync(userId));
   }
 
   function handleUserOrder(userId) {
@@ -50,56 +55,27 @@ export default function Users() {
 
   function totalCustomers() {
     const uniqueUsers = new Set(orders.map((order) => order.user));
-    let userIds = [];
-    if (uniqueUsers) {
-      for (let userId of uniqueUsers) {
-        console.log(userId);
-        userIds.push(userId);
-      }
-    }
-    console.log(userIds);
-    const visitors = fetchedUsers.filter((user) => !userIds.includes(user.id));
-    const customers = fetchedUsers.filter((user) => userIds.includes(user.id));
+    console.log(uniqueUsers);
+    const visitors = fetchedUsers.filter((user) => !uniqueUsers.has(user.id));
+    const customers = fetchedUsers.filter((user) => uniqueUsers.has(user.id));
     console.log(customers);
+    console.log(visitors);
     return { visitors: visitors, customers: customers };
   }
 
-  useEffect(() => {
-<<<<<<< HEAD
-    if (filter === "all") {
-      setUsers(fetchedUsers);
-    } else if (filter === "customers") {
-      const customers = fetchedUsers.filter((user) => uniqueUsers.has(user.id));
-      setUsers(customers);
-    } else if (filter === "visitors") {
-      const visitors = fetchedUsers.filter((user) => !uniqueUsers.has(user.id));
-      setUsers(visitors);
-=======
-    if (fetchedUsers) {
-      let filteredUser = [];
-      if (filter === "all") {
-        filteredUser = fetchedUsers;
-        setUsers(filteredUser);
-      } else if (filter === "customers") {
-        for (let userId of uniqueUsers) {
-          totalCustomers();
-          const userDetails = getCustomerDetails(userId);
-          if (userDetails) {
-            filteredUser.push(userDetails);
-          }
-        }
+  function getCustomerDetails(userId) {
+    return fetchedUsers.find((u) => u.id === userId);
+  }
 
-        setUsers(filteredUser);
-      }
->>>>>>> change1
+  useEffect(() => {
+    if (fetchedUsers) {
+      setUsers(fetchedUsers);
     }
   }, [dispatch, filter, fetchedUsers]);
 
-  console.log(users);
-
   useEffect(() => {
     dispatch(fetchAllUsersAsync());
-  }, [dispatch, filter]);
+  }, [dispatch]);
 
   return (
     <section className="container px-4 mx-auto">
@@ -121,7 +97,7 @@ export default function Users() {
       </div>
       <div className="mt-6 md:flex md:items-center md:justify-between">
         <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
-          <button
+          {/* <button
             onClick={() => setFilter("all")}
             className={`px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 ${
               filter === "all" && "bg-gray-100"
@@ -136,7 +112,7 @@ export default function Users() {
             } px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100`}
           >
             Customers
-          </button>
+          </button> */}
           {/* <button
             onClick={() => setFilter("visitors")}
             className={` ${
@@ -236,14 +212,19 @@ export default function Users() {
                                 : "text-yellow-500 gap-x-2 bg-yellow-100/60"
                             }`}
                           >
-                            <select
-                              onChange={(e) => handleUserRoleChange(e, user.id)}
-                              className="bg-transparent outline-none text-black"
-                              defaultValue={user.role}
-                            >
-                              <option value={"user"}>user</option>
-                              <option value={"admin"}>admin</option>
-                            </select>
+                            {user.role && (
+                              <select
+                                onChange={(e) =>
+                                  handleUserRoleChange(e, user.id)
+                                }
+                                className="bg-transparent outline-none text-black"
+                                defaultValue={user.role}
+                              >
+                                <option value={"user"}>user</option>
+                                <option value={"admin"}>admin</option>
+                              </select>
+                            )}
+
                             <h1>{user.role}</h1>
                           </div>
                         </td>

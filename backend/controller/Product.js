@@ -1,20 +1,32 @@
 const { Product } = require("../model/Product");
 
-// exports.createNewProduct = async (req, res) => {
-//   try {
-//     console.log(req.body);
-//     console.log(req.file);
-//     const product = new Product(req.body);
-//     const file = req.file;
-//     const imageUrl = `http://localhost:3000/${file.path}`;
-//     product.thumbnail = imageUrl;
-//     const doc = await product.save();
-//     res.status(201).json(doc);
-//   } catch (err) {
-//     console.log(err);
-//     res.status(401).json(err);
-//   }
-// };
+exports.createNewProduct = async (req, res) => {
+  try {
+    const product = new Product({ ...req.body });
+    console.log(product);
+    const doc = await product.save();
+    res.status(201).json(doc);
+  } catch (err) {
+    console.log(err);
+    res.status(401).json(err);
+  }
+};
+
+exports.editProduct = async (req, res) => {
+  try {
+    const { id } = req.body;
+    console.log(id);
+    console.log(req.body);
+    const product = await Product.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    console.log(product);
+    res.status(201).json(product);
+  } catch (err) {
+    res.status(401).json(err);
+    console.log(err);
+  }
+};
 
 exports.fetchAllProducts = async (req, res) => {
   console.log("hello");

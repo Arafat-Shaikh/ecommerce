@@ -1,3 +1,5 @@
+import { deleteOrderAsync } from "../slices/adminOrderSlice";
+
 export function fetchAllUsers() {
   return new Promise(async (resolve, reject) => {
     try {
@@ -24,6 +26,7 @@ export function adminDeleteUser(userId) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
+
       resolve({ data });
     } catch (err) {
       reject(err);

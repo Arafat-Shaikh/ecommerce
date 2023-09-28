@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
-  createProductApiAsync,
   fetchProductFiltersAsync,
   selectProducts,
   selectProductsForFilter,
@@ -16,8 +15,14 @@ import { ITEMS_PER_PAGE } from "../../constants/Constants";
 import Users from "./AdminUsersList";
 
 import Orders from "./AdminOrderList";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { FunnelIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { Form } from "react-router-dom";
+import axios from "axios";
+import {
+  createProductApiAsync,
+  updateProductApiAsync,
+} from "../slices/adminProductSlice";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -347,6 +352,7 @@ function Products() {
   const dispatch = useDispatch();
   const [isOpenForm, setForm] = useState(false);
   const [products, setProducts] = useState(fetchedProducts);
+  const [editProduct, setEditProduct] = useState({});
   console.log(products);
 
   function searchAdminProduct(e) {
@@ -381,17 +387,27 @@ function Products() {
       setProducts(fetchedProducts);
     }
   }
-<<<<<<< HEAD
 
-=======
->>>>>>> df8fcea
+  function handleEditProduct(productId) {
+    const product = products.filter((p) => p.id === productId);
+    setEditProduct(product);
+    setForm(true);
+    console.log(editProduct);
+  }
   useEffect(() => {
     dispatch(fetchProductFiltersAsync());
   }, [dispatch]);
 
   return (
     <>
-      {isOpenForm && <ProductForm isOpenForm={isOpenForm} setForm={setForm} />}
+      {isOpenForm && (
+        <ProductForm
+          isOpenForm={isOpenForm}
+          setForm={setForm}
+          editProduct={editProduct}
+          setEditProduct={setEditProduct}
+        />
+      )}
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="p-4">
           <label htmlFor="table-search" className="sr-only">
@@ -479,12 +495,12 @@ function Products() {
                   <td className="px-6 py-4">{p.category}</td>
                   <td className="px-6 py-4">${p.price}</td>
                   <td className="px-6 py-4 text-right">
-                    <a
-                      href="#"
+                    <button
+                      onClick={() => handleEditProduct(p.id)}
                       className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     >
                       Edit
-                    </a>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -497,61 +513,51 @@ function Products() {
   );
 }
 
-function ProductForm({ isOpenForm, setForm }) {
+function ProductForm({ isOpenForm, setForm, editProduct, setEditProduct }) {
   const cancelButtonRef = useRef(null);
   const {
     register,
     handleSubmit,
+    control,
+    setValue,
     watch,
     reset,
     formState: { errors },
   } = useForm();
   const dispatch = useDispatch();
-  const [productImage, setProductImage] = useState({ file: "" });
-
-  function convertToBaseUrl(file) {
-    return new Promise(async (resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  }
-
-  async function handleFile(e) {
-    console.log(e.target.files[0]);
-    const baseFile = await convertToBaseUrl(e.target.files[0]);
-    setProductImage(baseFile);
-  }
 
   const onSubmit = (data) => {
-    setForm(false);
-    // const userImage = Array.from(data.image);
-    // let image = [];
+    const images = [data.image1, data.image2, data.image3, data.image4];
+    const newProducts = { ...data, images: images };
+    if (!Object.keys(editProduct).length) {
+      dispatch(createProductApiAsync(newProducts));
+    } else {
+      dispatch(updateProductApiAsync(newProducts));
+      setEditProduct({});
+    }
 
-    // userImage.forEach((file, index) => {
-    //   const reader = new FileReader();
-    //   reader.readAsDataURL(file);
-    //   reader.onload = () => {
-    //     if (reader.readyState === 2) {
-    //       image.push(reader.result);
-    //     }
-    //   };
-    // });
-    // delete data.image;
-    // const newProduct = {
-    //   ...data,
-    //   images: image,
-    // };
-    // console.log(newProduct);
-    delete data.images;
-    console.log(productImage);
-    dispatch(createProductApiAsync({ ...data, images: productImage }));
+    setForm(false);
   };
+
+  useEffect(() => {
+    if (editProduct) {
+      console.log(editProduct.title);
+      console.log(editProduct);
+      console.log("hello");
+      setValue("title", editProduct.title);
+      setValue("brand", editProduct.brand);
+      setValue("category", editProduct.category);
+      setValue("price", editProduct.price);
+      setValue("discountPercentage", editProduct.discountPercentage);
+      setValue("stock", editProduct.stock);
+      setValue("description", editProduct.description);
+      setValue("thumbnail", editProduct.thumbnail);
+      setValue("image1", editProduct.image1);
+      setValue("image2", editProduct.image2);
+      setValue("image3", editProduct.image3);
+      setValue("image4", editProduct.image4);
+    }
+  }, []);
 
   return (
     <Transition.Root show={isOpenForm} as={Fragment}>
@@ -716,51 +722,86 @@ function ProductForm({ isOpenForm, setForm }) {
                       >
                         Description
                       </label>
-                    </div>
-                    {/* <div className="relative z-0 w-full mb-6 group">
-                      <label
-                        htmlFor="thumbnail"
-                        className="text-lg font-bold text-gray-700"
-                      >
-                        Select an image for thumbnail
-                      </label>
-                      <input
-                        type="file"
-                        id="thumbnail"
-                        name="thumbnail"
-                        accept="image/*"
-                        {...register("thumbnail", { required: true })}
-                        className="mt-2 mb-4 border border-gray-300 rounded-md"
-                      />
-                      {errors.thumbnail && (
-                        <p className="text-sm text-red-500">
-                          Please select an image file
-                        </p>
-                      )}
-                    </div> */}
+                    </div>{" "}
                     <div className="relative z-0 w-full mb-6 group">
-                      <label
-                        htmlFor="image"
-                        className="text-lg font-bold text-gray-700"
-                      >
-                        Select an image to upload
-                      </label>
                       <input
-                        type="file"
-                        id="images"
-                        name="images"
-                        accept="image/*"
-                        {...register("images", { required: true })}
-                        className="mt-2 mb-4 border border-gray-300 rounded-md"
-                        onChange={(e) => handleFile(e)}
+                        id="thumbnail"
+                        {...register("thumbnail", {
+                          required: true,
+                          maxLength: 80,
+                        })}
+                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                        placeholder=" "
                       />
-                      {errors.image && (
-                        <p className="text-sm text-red-500">
-                          Please select an image file
-                        </p>
-                      )}
+                      <label
+                        htmlFor="description"
+                        className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                      >
+                        Thumbnail
+                      </label>
                     </div>
-
+                    <div className="grid md:grid-cols-2 md:gap-6">
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="image1"
+                          {...register("image1", {
+                            required: true,
+                          })}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="stock"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Image 1
+                        </label>
+                      </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="image2"
+                          {...register("image2", {})}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="image2"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Image 2
+                        </label>
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 md:gap-6">
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="image3"
+                          {...register("image3", {})}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="image3"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Image 3
+                        </label>
+                      </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="image4"
+                          {...register("image4", {})}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="image4"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Image 4
+                        </label>
+                      </div>
+                    </div>
                     <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                       <button
                         type="submit"
