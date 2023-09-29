@@ -14,13 +14,14 @@ exports.createNewProduct = async (req, res) => {
 
 exports.editProduct = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     console.log(id);
     console.log(req.body);
     const product = await Product.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     console.log(product);
+
     res.status(201).json(product);
   } catch (err) {
     res.status(401).json(err);

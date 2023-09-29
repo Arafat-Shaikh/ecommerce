@@ -9,6 +9,7 @@ import { StatusContext, useColor } from "../../Context/UseColor";
 export default function Orders() {
   const dispatch = useDispatch();
   const orders = useSelector(selectAllOrders);
+  const sales = orders.reduce((acc, order) => order.totalAmount + acc, 0);
 
   function handleStatusChange(value, orderIndex) {
     let copiedOrder = [...orders];
@@ -26,6 +27,22 @@ export default function Orders() {
 
   return (
     <section className="container px-4 mx-auto">
+      <div className="sm:flex sm:items-center sm:justify-between mb-4">
+        <div className="flex items-center gap-x-3">
+          <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+            Total Sales
+          </h2>
+          <span className="px-3 py-1 text-md text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
+            ${sales}
+          </span>
+          <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+            Orders
+          </h2>
+          <span className="px-3 py-1 text-md text-blue-600 bg-blue-100 rounded-full dark:bg-blue-800 dark:text-blue-400">
+            {orders.length}
+          </span>
+        </div>
+      </div>
       <div className="flex flex-col">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 ">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -118,7 +135,7 @@ export default function Orders() {
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap ">
                             {order.items.map((item) => (
-                              <div class="flex items-center mb-2 ">
+                              <div class="flex items-center mb-2  rounded-xl bg-orange-100 px-2 py-1">
                                 <div class="mr-2">
                                   <img
                                     className=" h-6 w-6 rounded-full"
@@ -126,12 +143,18 @@ export default function Orders() {
                                     alt="product"
                                   />
                                 </div>
-                                <div className="text-sm">
-                                  <div className="font-medium text-gray-700 text-xs">
+                                <div className="text-sm ">
+                                  <div className="font-medium text-xs text-orange-700">
                                     {item.product.title}
                                   </div>
-                                  <div className="text-gray-400 text-xs">
+                                  <div className="text-gray-500 text-xs ">
                                     Qty: {item.quantity}
+                                  </div>
+                                  <div className="text-gray-500 text-xs ">
+                                    Total Amount:{" "}
+                                    <span className="text-black text-md  p-1">
+                                      ${order.totalAmount}
+                                    </span>
                                   </div>
                                 </div>
                               </div>

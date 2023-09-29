@@ -1,9 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
+  createProductApiAsync,
+  fetchProductByIdAsync,
   fetchProductFiltersAsync,
+  selectProductById,
   selectProducts,
   selectProductsForFilter,
   selectTotalProducts,
+  updateProductApiAsync,
 } from "../../Slices/productSlice";
 import { useEffect } from "react";
 import { Fragment } from "react";
@@ -19,10 +23,6 @@ import { Controller, useForm } from "react-hook-form";
 import { FunnelIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { Form } from "react-router-dom";
 import axios from "axios";
-import {
-  createProductApiAsync,
-  updateProductApiAsync,
-} from "../slices/adminProductSlice";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -351,12 +351,13 @@ function Products() {
   const fetchedProducts = useSelector(selectProductsForFilter);
   const dispatch = useDispatch();
   const [isOpenForm, setForm] = useState(false);
+  const [isOpenEditForm, setEditForm] = useState(false);
   const [products, setProducts] = useState(fetchedProducts);
-  const [editProduct, setEditProduct] = useState({});
-  console.log(products);
+  const [editProduct, setEditProduct] = useState();
+  const product = useSelector(selectProductById);
+  const outOfStock = fetchedProducts.filter((p) => p.stock === 0);
 
   function searchAdminProduct(e) {
-    console.log(e.target.value);
     if (e.target.value) {
       const isProducts = fetchedProducts.filter((p) => {
         const title =
@@ -381,7 +382,6 @@ function Products() {
           category.includes(targetValue)
         );
       });
-      console.log(isProducts);
       setProducts(isProducts);
     } else {
       setProducts(fetchedProducts);
@@ -389,14 +389,23 @@ function Products() {
   }
 
   function handleEditProduct(productId) {
-    const product = products.filter((p) => p.id === productId);
-    setEditProduct(product);
-    setForm(true);
+    setEditForm(true);
+    dispatch(fetchProductByIdAsync(productId));
     console.log(editProduct);
   }
+
+  function handleAddProduct() {
+    setForm(true);
+  }
+
   useEffect(() => {
     dispatch(fetchProductFiltersAsync());
-  }, [dispatch]);
+    console.log("hello world");
+  }, [dispatch, isOpenEditForm, isOpenForm]);
+
+  useEffect(() => {
+    setProducts(fetchedProducts);
+  }, [fetchedProducts]);
 
   return (
     <>
@@ -408,7 +417,30 @@ function Products() {
           setEditProduct={setEditProduct}
         />
       )}
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      {isOpenEditForm && (
+        <EditProductForm
+          isOpenEditForm={isOpenEditForm}
+          setEditForm={setEditForm}
+          editProduct={product}
+        />
+      )}
+      <div className="sm:flex sm:items-center sm:justify-between mb-4">
+        <div className="flex items-center gap-x-3">
+          <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+            Total Products
+          </h2>
+          <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
+            {fetchedProducts.length}
+          </span>
+          <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+            Out of stock
+          </h2>
+          <span className="px-3 py-1 text-xs text-red-600 bg-red-100 rounded-full dark:bg-red-800 dark:text-red-400">
+            {outOfStock.length}
+          </span>
+        </div>
+      </div>
+      <div className="relative overflow-x-auto overflow-y-auto h-screen shadow-md sm:rounded-lg">
         <div className="p-4">
           <label htmlFor="table-search" className="sr-only">
             Search
@@ -455,7 +487,7 @@ function Products() {
               </th>
               <th scope="col" className="px-6 py-3">
                 <button
-                  onClick={() => setForm(true)}
+                  onClick={() => handleAddProduct()}
                   className="bg-yellow-600 hover:bg-yellow-700 px-2 py-1 rounded-xl"
                 >
                   Add+
@@ -504,8 +536,6 @@ function Products() {
                   </td>
                 </tr>
               ))}
-
-            {/* Add more rows as needed */}
           </tbody>
         </table>
       </div>
@@ -513,7 +543,12 @@ function Products() {
   );
 }
 
-function ProductForm({ isOpenForm, setForm, editProduct, setEditProduct }) {
+function EditProductForm({
+  isOpenEditForm,
+  setEditForm,
+  editProduct,
+  setEditProduct,
+}) {
   const cancelButtonRef = useRef(null);
   const {
     register,
@@ -528,22 +563,23 @@ function ProductForm({ isOpenForm, setForm, editProduct, setEditProduct }) {
 
   const onSubmit = (data) => {
     const images = [data.image1, data.image2, data.image3, data.image4];
-    const newProducts = { ...data, images: images };
-    if (!Object.keys(editProduct).length) {
-      dispatch(createProductApiAsync(newProducts));
-    } else {
-      dispatch(updateProductApiAsync(newProducts));
-      setEditProduct({});
-    }
-
-    setForm(false);
+    delete data.image1;
+    delete data.image2;
+    delete data.image3;
+    delete data.image4;
+    const newProduct = { ...data, images: images, id: editProduct.id };
+    console.log(newProduct);
+    dispatch(updateProductApiAsync(newProduct));
+    setEditForm(false);
   };
 
+  function handleCancelForm() {
+    setEditForm(false);
+  }
+
   useEffect(() => {
+    console.log(editProduct);
     if (editProduct) {
-      console.log(editProduct.title);
-      console.log(editProduct);
-      console.log("hello");
       setValue("title", editProduct.title);
       setValue("brand", editProduct.brand);
       setValue("category", editProduct.category);
@@ -552,12 +588,301 @@ function ProductForm({ isOpenForm, setForm, editProduct, setEditProduct }) {
       setValue("stock", editProduct.stock);
       setValue("description", editProduct.description);
       setValue("thumbnail", editProduct.thumbnail);
-      setValue("image1", editProduct.image1);
-      setValue("image2", editProduct.image2);
-      setValue("image3", editProduct.image3);
-      setValue("image4", editProduct.image4);
+      setValue("image1", editProduct.images[0]);
+      setValue("image2", editProduct.images[1]);
+      setValue("image3", editProduct.images[2]);
+      setValue("image4", editProduct.images[3]);
     }
-  }, []);
+  }, [isOpenEditForm, editProduct]);
+
+  return (
+    <Transition.Root show={isOpenEditForm} as={Fragment}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        initialFocus={cancelButtonRef}
+        onClose={setEditForm}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div className="sm:flex-none  lg:flex md:flex min-h-full items-end justify-center p-4 text-center sm:items-start sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                  <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <div className="grid md:grid-cols-2 md:gap-6">
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="title"
+                          {...register("title", {
+                            required: true,
+                            maxLength: 80,
+                          })}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="title"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Title
+                        </label>
+                      </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="brand"
+                          {...register("brand", {
+                            required: true,
+                            maxLength: 80,
+                          })}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="category"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Brand
+                        </label>
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 md:gap-6">
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="category"
+                          {...register("category", {
+                            required: true,
+                            maxLength: 80,
+                          })}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="state"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Category
+                        </label>
+                      </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="price"
+                          type="number"
+                          {...register("price", {
+                            required: true,
+                            maxLength: 80,
+                            valueAsNumber: true,
+                          })}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="price"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Price
+                        </label>
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 md:gap-6">
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="stock"
+                          {...register("stock", {
+                            required: true,
+                            maxLength: 80,
+                            valueAsNumber: true,
+                          })}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="stock"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Stock
+                        </label>
+                      </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="discountPercentage"
+                          type="number"
+                          {...register("discountPercentage", {
+                            required: true,
+                            maxLength: 80,
+                            valueAsNumber: true,
+                          })}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="city"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Discount
+                        </label>
+                      </div>
+                    </div>
+                    <div className="relative z-0 w-full mb-6 group">
+                      <input
+                        id="description"
+                        {...register("description", {
+                          required: true,
+                        })}
+                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                        placeholder=" "
+                      />
+                      <label
+                        htmlFor="description"
+                        className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                      >
+                        Description
+                      </label>
+                    </div>{" "}
+                    <div className="relative z-0 w-full mb-6 group">
+                      <input
+                        id="thumbnail"
+                        {...register("thumbnail", {
+                          required: true,
+                        })}
+                        className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                        placeholder=" "
+                      />
+                      <label
+                        htmlFor="description"
+                        className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                      >
+                        Thumbnail
+                      </label>
+                    </div>
+                    <div className="grid md:grid-cols-2 md:gap-6">
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="image1"
+                          {...register("image1", {
+                            required: true,
+                          })}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="stock"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Image 1
+                        </label>
+                      </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="image2"
+                          {...register("image2", {})}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="image2"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Image 2
+                        </label>
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 md:gap-6">
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="image3"
+                          {...register("image3", {})}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="image3"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Image 3
+                        </label>
+                      </div>
+                      <div className="relative z-0 w-full mb-6 group">
+                        <input
+                          id="image4"
+                          {...register("image4", {})}
+                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                          placeholder=" "
+                        />
+                        <label
+                          htmlFor="image4"
+                          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                        >
+                          Image 4
+                        </label>
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                      <button
+                        type="submit"
+                        className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                      >
+                        Submit
+                      </button>
+                      <button
+                        type="button"
+                        className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                        onClick={() => handleCancelForm()}
+                        ref={cancelButtonRef}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
+  );
+}
+
+function ProductForm({ isOpenForm, setForm }) {
+  const cancelButtonRef = useRef(null);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm();
+  const dispatch = useDispatch();
+
+  const onSubmit = (data) => {
+    const images = [data.image1, data.image2, data.image3, data.image4];
+    const newProduct = { ...data, images: images };
+    dispatch(createProductApiAsync(newProduct));
+    setForm(false);
+  };
+
+  function handleCancelForm() {
+    setForm(false);
+  }
 
   return (
     <Transition.Root show={isOpenForm} as={Fragment}>
@@ -812,7 +1137,7 @@ function ProductForm({ isOpenForm, setForm, editProduct, setEditProduct }) {
                       <button
                         type="button"
                         className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                        onClick={() => setForm(false)}
+                        onClick={() => handleCancelForm()}
                         ref={cancelButtonRef}
                       >
                         Cancel

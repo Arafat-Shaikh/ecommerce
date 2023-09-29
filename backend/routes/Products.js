@@ -13,5 +13,5 @@ router
   .get("/detail/:id", fetchProductById)
   .get("/filter", fetchAllProducts)
   .post("/", createNewProduct)
-  .patch("/", editProduct);
+  .patch("/:id", editProduct);
 exports.router = router;

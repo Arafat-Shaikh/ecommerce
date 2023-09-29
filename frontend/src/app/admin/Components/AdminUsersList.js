@@ -224,8 +224,6 @@ export default function Users() {
                                 <option value={"admin"}>admin</option>
                               </select>
                             )}
-
-                            <h1>{user.role}</h1>
                           </div>
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
