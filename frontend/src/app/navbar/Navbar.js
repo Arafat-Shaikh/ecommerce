@@ -34,6 +34,10 @@ function classNames(...classes) {
 export default function Navbar({ children }) {
   const cart = useSelector(selectCart);
   const userToken = useSelector(selectUserToken);
+  if (!userToken) {
+    const login = { name: "login", link: "/login" };
+    userNavigation[3] = login;
+  }
 
   return (
     <>

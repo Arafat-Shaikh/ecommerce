@@ -114,8 +114,8 @@ function App() {
 
   useEffect(() => {
     if (userToken) {
-      dispatch(fetchCartByUserAsync());
       dispatch(fetchAllOrdersAdminApiAsync());
+      dispatch(fetchCartByUserAsync());
     }
 
     console.log("hello");

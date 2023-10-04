@@ -27,13 +27,13 @@ export const signupUserAuth = createAsyncThunk(
 
 export const loginUserAuth = createAsyncThunk(
   "auth/loginUserAuth",
-  async (user, thunkAPI) => {
+  async (user, { rejectWithValue }) => {
     try {
       const response = await loginUser(user);
       return response.data;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.response.data.errors);
+      return rejectWithValue(error);
     }
   }
 );
@@ -114,4 +114,5 @@ const authSlice = createSlice({
 });
 
 export const selectUserToken = (state) => state.auth.userToken;
+export const selectLoginError = (state) => state.auth.errorMessage;
 export default authSlice.reducer;

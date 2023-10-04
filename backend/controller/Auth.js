@@ -21,7 +21,7 @@ exports.signupUser = async (req, res) => {
           if (err) {
             res.status(401).json(err);
           } else {
-            const token = jwt.sign(filterUser(doc), "SECRET_KEY");
+            const token = jwt.sign(filterUser(doc), process.env.JWT_KEY);
             res
               .cookie("jwt", token, {
                 expires: new Date(Date.now() + 7200000),

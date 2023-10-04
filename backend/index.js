@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -6,7 +7,6 @@ const cartRouter = require("./routes/Cart");
 const authRouter = require("./routes/Auth");
 const orderRouter = require("./routes/Order");
 const userRouter = require("./routes/User");
-const multer = require("multer");
 const cors = require("cors");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -23,11 +23,10 @@ const path = require("path");
 main().catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/myEcommerce");
+  await mongoose.connect(process.env.MONGO_URL);
   console.log("database connected");
 }
 
-const SECRET_KEY = "SECRET_KEY";
 const opts = {};
 opts.jwtFromRequest = function (req, res) {
   let token = null;
@@ -36,7 +35,7 @@ opts.jwtFromRequest = function (req, res) {
   }
   return token;
 };
-opts.secretOrKey = SECRET_KEY;
+opts.secretOrKey = process.env.JWT_KEY;
 
 app.use(express.static(path.resolve(__dirname, "build")));
 app.use(cors({ exposedHeaders: ["X-DOCUMENT-COUNT"] }));
@@ -45,7 +44,7 @@ app.use(cookieParser());
 app.use(
   session({
     // this will create session serialize and deserialize mentioned below.
-    secret: "your-secret-key",
+    secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: false,
   })
@@ -61,7 +60,6 @@ passport.use(
     { usernameField: "email" }, // here username field will change make email to use as a username.
     async function (email, password, done) {
       try {
-        console.log("you got here");
         const user = await User.findOne({ email: email });
         if (!user) {
           return done(null, false, { message: "Invalid User." });
@@ -78,14 +76,14 @@ passport.use(
             if (!crypto.timingSafeEqual(user.password, hashedPassword)) {
               done(null, false, { message: "Invalid User" });
             } else {
-              const token = jwt.sign(filterUser(user), SECRET_KEY);
+              const token = jwt.sign(filterUser(user), process.env.JWT_KEY);
               return done(null, { id: user.id, role: user.role, token });
             }
           }
         );
       } catch (err) {
         console.log(err);
-        return done(err, false);
+        return done("Invalid User", false);
       }
     }
   )
@@ -132,15 +130,10 @@ app.use("/cart", isAuth(), cartRouter.router);
 app.use("/orders", isAuth(), orderRouter.router);
 app.use("/users", isAuth(), userRouter.router);
 
-// app.use("/products", productsRouter.router);
-// app.use("/cart", cartRouter.router);
-// app.use("/orders", orderRouter.router);
-// app.use("/users", userRouter.router);
-
 app.use("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "build", "index.html"));
 });
 
-app.listen(8080, () => {
+app.listen(process.env.PORT, () => {
   console.log("server is running.");
 });

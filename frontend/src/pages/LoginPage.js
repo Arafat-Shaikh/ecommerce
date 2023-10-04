@@ -1,7 +1,11 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUserAuth, selectUserToken } from "../app/Slices/authSlice";
+import {
+  loginUserAuth,
+  selectLoginError,
+  selectUserToken,
+} from "../app/Slices/authSlice";
 import { Navigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -14,6 +18,7 @@ export default function LoginPage() {
   } = useForm();
   const dispatch = useDispatch();
   const userToken = useSelector(selectUserToken);
+  const error = useSelector(selectLoginError);
   return (
     <>
       {userToken && <Navigate to={"/"} replace={true}></Navigate>}
@@ -71,6 +76,7 @@ export default function LoginPage() {
                   {errors.password && (
                     <p className="text-red-500">{errors.password.message}</p>
                   )}
+                  {error && <p className="text-md text-red-500">{error}</p>}
                 </div>
                 <div className="flex items-center justify-between">
                   <a

@@ -30,7 +30,9 @@ export function loginUser(user) {
         const data = await response.json();
         resolve({ data });
       } else {
+        console.log(response);
         const error = await response.text();
+        console.log(error.message);
         reject(error);
       }
     } catch (err) {

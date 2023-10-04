@@ -7,18 +7,13 @@ import {
   fetchAllUsersAsync,
   selectAllUser,
 } from "../slices/adminUserSlice";
-import {
-  deleteOrderAsync,
-  fetchAllOrdersAdminApiAsync,
-  fetchUserOrdersByAdminAsync,
-  selectAllOrders,
-} from "../slices/adminOrderSlice";
+import { selectAllOrders } from "../slices/adminOrderSlice";
 
 export default function Users() {
   const dispatch = useDispatch();
   const fetchedUsers = useSelector(selectAllUser);
   const orders = useSelector(selectAllOrders);
-  const [filter, setFilter] = useState();
+  const [filter, setFilter] = useState("all");
   const [customer, setCustomer] = useState();
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
@@ -69,7 +64,13 @@ export default function Users() {
 
   useEffect(() => {
     if (fetchedUsers) {
-      setUsers(fetchedUsers);
+      if (filter === "all") {
+        setUsers(fetchedUsers);
+      } else if (filter === "customers") {
+        setUsers(totalCustomers().customers);
+      } else if (filter === "visitors") {
+        setUsers(totalCustomers().visitors);
+      }
     }
   }, [dispatch, filter, fetchedUsers]);
 
@@ -97,7 +98,7 @@ export default function Users() {
       </div>
       <div className="mt-6 md:flex md:items-center md:justify-between">
         <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
-          {/* <button
+          <button
             onClick={() => setFilter("all")}
             className={`px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 ${
               filter === "all" && "bg-gray-100"
@@ -112,15 +113,15 @@ export default function Users() {
             } px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100`}
           >
             Customers
-          </button> */}
-          {/* <button
+          </button>
+          <button
             onClick={() => setFilter("visitors")}
             className={` ${
               filter === "visitors" && "bg-gray-100"
             } px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100`}
           >
             Visitors
-          </button> */}
+          </button>
         </div>
       </div>
       <div className="flex flex-col mt-6">
@@ -218,7 +219,7 @@ export default function Users() {
                                   handleUserRoleChange(e, user.id)
                                 }
                                 className="bg-transparent outline-none text-black"
-                                defaultValue={user.role}
+                                value={user.role}
                               >
                                 <option value={"user"}>user</option>
                                 <option value={"admin"}>admin</option>

@@ -1,29 +1,34 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteOrderAsync,
+  fetchAllOrdersAdminApiAsync,
   selectAllOrders,
   updateOrderAdminAsync,
 } from "../slices/adminOrderSlice";
 import { StatusContext, useColor } from "../../Context/UseColor";
+import { useEffect, useState } from "react";
 
 export default function Orders() {
   const dispatch = useDispatch();
   const orders = useSelector(selectAllOrders);
   const sales = orders.reduce((acc, order) => order.totalAmount + acc, 0);
+  const handleDisplayColor = useColor(StatusContext);
 
-  function handleStatusChange(value, orderIndex) {
+  function handleStatusChange(e, orderIndex) {
     let copiedOrder = [...orders];
     copiedOrder = { ...copiedOrder[orderIndex] };
-    copiedOrder.OrderStatus = value;
+    copiedOrder.OrderStatus = e.target.value;
     dispatch(updateOrderAdminAsync(copiedOrder));
   }
 
+  console.log(orders);
   function deleteOrder(orderId) {
-    console.log(orderId);
     dispatch(deleteOrderAsync(orderId));
   }
 
-  const handleDisplayColor = useColor(StatusContext);
+  useEffect(() => {
+    dispatch(fetchAllOrdersAdminApiAsync());
+  }, [dispatch]);
 
   return (
     <section className="container px-4 mx-auto">
@@ -123,7 +128,7 @@ export default function Orders() {
                   <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900   ">
                     {orders &&
                       orders.map((order, index) => (
-                        <tr>
+                        <tr key={index}>
                           <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
                             <div className="inline-flex items-center gap-x-3">
                               <input
@@ -134,31 +139,41 @@ export default function Orders() {
                             </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap ">
-                            {order.items.map((item) => (
-                              <div class="flex items-center mb-2  rounded-xl bg-orange-100 px-2 py-1">
-                                <div class="mr-2">
-                                  <img
-                                    className=" h-6 w-6 rounded-full"
-                                    src={item.product.thumbnail}
-                                    alt="product"
-                                  />
+                            <div className="rounded-xl bg-orange-100 px-2 py-1">
+                              {order.items.map((item, index) => (
+                                <div
+                                  key={index}
+                                  class="flex items-center mb-2  "
+                                >
+                                  <div class="mr-2">
+                                    <img
+                                      className=" h-6 w-6 rounded-full"
+                                      src={item.product.thumbnail}
+                                      alt="product"
+                                    />
+                                  </div>
+                                  <div className="text-sm ">
+                                    <div className="font-medium text-xs text-orange-700">
+                                      {item.product.title}
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="text-sm ">
-                                  <div className="font-medium text-xs text-orange-700">
-                                    {item.product.title}
-                                  </div>
-                                  <div className="text-gray-500 text-xs ">
-                                    Qty: {item.quantity}
-                                  </div>
-                                  <div className="text-gray-500 text-xs ">
-                                    Total Amount:{" "}
-                                    <span className="text-black text-md  p-1">
-                                      ${order.totalAmount}
-                                    </span>
-                                  </div>
+                              ))}
+                              <div className="border-2 p-2 border-gray-300 rounded-xl mt-4">
+                                <div className="font-medium text-xs text-orange-700">
+                                  Total Items:{" "}
+                                  <span className="font-semibold text-md text-green-600 p-1">
+                                    {order.totalItems}
+                                  </span>
+                                </div>
+                                <div className="  font-medium text-xs text-orange-700 ">
+                                  Total Amount:{" "}
+                                  <span className="font-semibold text-md text-green-600 p-1">
+                                    ${order.totalAmount}
+                                  </span>
                                 </div>
                               </div>
-                            ))}
+                            </div>
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
                             {" "}
@@ -190,11 +205,9 @@ export default function Orders() {
                               </svg>
 
                               <select
-                                onChange={(e) =>
-                                  handleStatusChange(e.target.value, index)
-                                }
+                                onChange={(e) => handleStatusChange(e, index)}
                                 className="bg-transparent outline-none"
-                                defaultValue={order.OrderStatus}
+                                value={order.OrderStatus}
                               >
                                 <option value={"Pending"}>Pending</option>
                                 <option value={"Processing"}>Processing</option>
@@ -216,15 +229,15 @@ export default function Orders() {
                                   stroke="currentColor"
                                 >
                                   <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                                   />
                                   <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                                   />
                                 </svg>
@@ -239,9 +252,9 @@ export default function Orders() {
                                   stroke="currentColor"
                                 >
                                   <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                   />
                                 </svg>

@@ -212,7 +212,10 @@ export default function Profile() {
           <ul>
             {userDetails &&
               userDetails.addresses.map((address, index) => (
-                <div className="mt-5 relative bg-white shadow cursor-pointer rounded-xl">
+                <div
+                  key={index}
+                  className="mt-5 relative bg-white shadow cursor-pointer rounded-xl"
+                >
                   <div className="sm:flex-none md:flex lg:flex xl:flex  py-4 px-8">
                     <div className="flex-1 py-5 overflow-hidden">
                       <ul>
