@@ -108,9 +108,9 @@ function App() {
   const dispatch = useDispatch();
   const userToken = useSelector(selectUserToken);
 
-  useEffect(() => {
-    dispatch(verifyUserSessionAsync());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(verifyUserSessionAsync());
+  // }, [dispatch]);
 
   useEffect(() => {
     if (userToken) {

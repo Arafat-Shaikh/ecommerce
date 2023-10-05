@@ -53,13 +53,13 @@ export const logoutUserAsync = createAsyncThunk(
 
 export const verifyUserSessionAsync = createAsyncThunk(
   "auth/verifyUserSessionAsync",
-  async (thunkAPI) => {
+  async ({ rejectWithValue }) => {
     try {
       const response = await verifyUserSession();
       return response.data;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.response.data.errors);
+      return rejectWithValue(error);
     }
   }
 );
