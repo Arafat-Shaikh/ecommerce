@@ -14,8 +14,6 @@ import { Fragment } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { useRef, useState } from "react";
 
-import { ITEMS_PER_PAGE } from "../../constants/Constants";
-
 import Users from "./AdminUsersList";
 
 import Orders from "./AdminOrderList";

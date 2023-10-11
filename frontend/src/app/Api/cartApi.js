@@ -5,7 +5,7 @@ export function addToCartApi(product) {
       const response = await fetch(`/cart`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Corrected headers
+          "content-Type": "application/json", // Corrected headers
         },
         body: JSON.stringify(product), // Corrected body
       });

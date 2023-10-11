@@ -1,7 +1,7 @@
 export function fetchCurrentUser() {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/users/search`);
+      const response = await fetch(`/users/search`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }

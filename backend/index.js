@@ -20,13 +20,6 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
-main().catch((err) => console.log(err));
-
-async function main() {
-  await mongoose.connect(process.env.MONGO_URL);
-  console.log("database connected");
-}
-
 const opts = {};
 opts.jwtFromRequest = function (req, res) {
   let token = null;
@@ -38,6 +31,7 @@ opts.jwtFromRequest = function (req, res) {
 opts.secretOrKey = process.env.JWT_KEY;
 
 app.use(express.static(path.resolve(__dirname, "build")));
+
 app.use(cors({ exposedHeaders: ["X-DOCUMENT-COUNT"] }));
 
 app.use(cookieParser());
@@ -51,8 +45,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(express.json());
 
 passport.use(
   // authenticate route for using this strategy as local.
@@ -106,7 +98,7 @@ passport.use(
     }
   })
 );
-
+//hello
 passport.serializeUser(function (user, done) {
   process.nextTick(function () {
     // this will create session and then you will be able to use that session for authentication.
@@ -124,6 +116,8 @@ passport.deserializeUser(function (user, done) {
   });
 });
 
+app.use(express.json());
+
 app.use("/auth", authRouter.router);
 app.use("/products", productsRouter.router);
 app.use("/cart", isAuth(), cartRouter.router);
@@ -131,8 +125,15 @@ app.use("/orders", isAuth(), orderRouter.router);
 app.use("/users", isAuth(), userRouter.router);
 
 app.use("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "build", "index.html"));
+  res.sendFile(path.resolve(__dirname, process.env.DIR_PUBLIC, "index.html"));
 });
+
+main().catch((err) => console.log(err));
+
+async function main() {
+  await mongoose.connect(process.env.MONGO_URL);
+  console.log("database connected");
+}
 
 app.listen(process.env.PORT, () => {
   console.log("server is running.");

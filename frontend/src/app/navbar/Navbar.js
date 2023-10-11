@@ -61,7 +61,8 @@ export default function Navbar({ children }) {
                             loading="lazy"
                           />
                         </a>
-                        {userToken.role === "admin" &&
+                        {userToken &&
+                          userToken.role === "admin" &&
                           navigation.map((item, index) =>
                             item[user.role] ? (
                               <Link
@@ -107,14 +108,18 @@ export default function Navbar({ children }) {
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3">
                         <div>
-                          <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                          <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                             <span className="absolute -inset-1.5" />
                             <span className="sr-only">Open user menu</span>
-                            <img
-                              className="h-8 w-8 rounded-full"
-                              src={profilePicture.imageUrl}
-                              alt={profilePicture.name}
-                            />
+
+                            <svg
+                              className="h-6 w-6 rounded-full"
+                              xmlns="http://www.w3.org/2000/svg"
+                              height="1em"
+                              viewBox="0 0 448 512"
+                            >
+                              <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z" />
+                            </svg>
                           </Menu.Button>
                         </div>
                         <Transition
@@ -171,45 +176,52 @@ export default function Navbar({ children }) {
 
               <Disclosure.Panel className="md:hidden">
                 <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-                  {navigation.map((item, index) => (
-                    <Disclosure.Button
-                      key={index}
-                      as="a"
-                      href={item.to}
-                      className={classNames(
-                        item.current
-                          ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                        "block rounded-md px-3 py-2 text-base font-medium"
-                      )}
-                      aria-current={item.current ? "page" : undefined}
-                    >
-                      {item.name}
-                    </Disclosure.Button>
-                  ))}
+                  {userToken &&
+                    userToken.role === "admin" &&
+                    navigation.map((item, index) =>
+                      item[user.role] ? (
+                        <Link
+                          key={index}
+                          to={item.to}
+                          className={classNames(
+                            item.current
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-600 hover:bg-gray-700 hover:text-white",
+                            "rounded-md px-3 py-2 text-sm font-medium"
+                          )}
+                        >
+                          {item.name}
+                        </Link>
+                      ) : null
+                    )}
                 </div>
                 <div className="border-t border-gray-700 pb-3 pt-4">
                   <div className="flex items-center px-5">
                     <div className="flex-shrink-0">
-                      <img
+                      {/* <img
                         className="h-10 w-10 rounded-full"
                         src={profilePicture.imageUrl}
                         alt=""
-                      />
+                      /> */}
+                      <svg
+                        className="h-6 w-6 rounded-full"
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="1em"
+                        viewBox="0 0 448 512"
+                      >
+                        <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z" />
+                      </svg>
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium leading-none text-white">
                         {profilePicture.name}
-                      </div>
-                      <div className="text-sm font-medium leading-none text-gray-400">
-                        {profilePicture.email}
                       </div>
                     </div>
 
                     <Link
                       to={"/cart"}
                       type="button"
-                      className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                      className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">View notifications</span>
@@ -227,10 +239,9 @@ export default function Navbar({ children }) {
                     )}
                   </div>
                   <div className="mt-3 space-y-1 px-2">
-                    {userNavigation.map((item) => (
-                      <Link to={item.link}>
+                    {userNavigation.map((item, index) => (
+                      <Link key={index} to={item.link}>
                         <Disclosure.Button
-                          key={item.name}
                           as="a"
                           className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                         >

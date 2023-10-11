@@ -53,13 +53,12 @@ export const logoutUserAsync = createAsyncThunk(
 
 export const verifyUserSessionAsync = createAsyncThunk(
   "auth/verifyUserSessionAsync",
-  async ({ rejectWithValue }) => {
+  async () => {
     try {
       const response = await verifyUserSession();
       return response.data;
     } catch (error) {
       console.log(error);
-      return rejectWithValue(error);
     }
   }
 );

@@ -1,11 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {
-  createOrderApi,
-  deleteOrderApi,
-  fetchAllOrdersAdmin,
-  fetchOrderByUser,
-  updateOrderAdmin,
-} from "../Api/orderApi";
+import { createOrderApi, fetchOrderByUser } from "../Api/orderApi";
 
 const initialState = {
   status: "idle",

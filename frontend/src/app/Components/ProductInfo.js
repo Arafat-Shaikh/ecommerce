@@ -134,9 +134,9 @@ export default function ProductInfo() {
                   <div className="flex items-center">
                     <div className="flex items-center">
                       {Array.from({ length: Math.floor(product.rating) }).map(
-                        (rating) => (
+                        (rating, index) => (
                           <StarIcon
-                            key={rating}
+                            key={index}
                             className={classNames(
                               reviews.average > rating
                                 ? "text-gray-900"
